@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html><head>
+<script>
+window.__resources = {
+  "https://unpkg.com/react@18.3.1/umd/react.production.min.js": "assets/react.production.min.js",
+  "https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js": "assets/react-dom.production.min.js"
+};
+</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/dc-runtime.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<style>/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/a3c2b794-f525-4e54-a5b2-a8c3f74c383b.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/6e179d79-ea87-41f6-b0e1-1b10755f4138.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/8affbdd6-3e41-4928-915d-3915f2a8c003.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/d5b15584-070f-4b55-a7f1-c6f526cf6399.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/e8a8f937-3fc5-4d85-9794-3cd11860bd34.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/356c4301-3b39-4d95-8c14-cbfbb8f86726.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/a3c2b794-f525-4e54-a5b2-a8c3f74c383b.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/6e179d79-ea87-41f6-b0e1-1b10755f4138.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/8affbdd6-3e41-4928-915d-3915f2a8c003.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/d5b15584-070f-4b55-a7f1-c6f526cf6399.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/e8a8f937-3fc5-4d85-9794-3cd11860bd34.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/356c4301-3b39-4d95-8c14-cbfbb8f86726.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/a3c2b794-f525-4e54-a5b2-a8c3f74c383b.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/6e179d79-ea87-41f6-b0e1-1b10755f4138.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/8affbdd6-3e41-4928-915d-3915f2a8c003.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/d5b15584-070f-4b55-a7f1-c6f526cf6399.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/e8a8f937-3fc5-4d85-9794-3cd11860bd34.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/356c4301-3b39-4d95-8c14-cbfbb8f86726.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/a3c2b794-f525-4e54-a5b2-a8c3f74c383b.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/6e179d79-ea87-41f6-b0e1-1b10755f4138.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/8affbdd6-3e41-4928-915d-3915f2a8c003.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/d5b15584-070f-4b55-a7f1-c6f526cf6399.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/e8a8f937-3fc5-4d85-9794-3cd11860bd34.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/356c4301-3b39-4d95-8c14-cbfbb8f86726.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/a5a4d717-0b7a-45c8-8cf0-3327d750c1f3.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/6816092c-e558-414e-9577-ca3fd66be482.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/819ba7ca-c1b8-4b9c-ab9c-87df43141abd.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/cc306ee4-eb38-4692-bfb8-6dc95e5edc62.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/bb0de696-3422-4504-b54a-c8729b81faa7.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/7e54d405-b72d-427e-aa7f-5d5a953e769a.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/a5a4d717-0b7a-45c8-8cf0-3327d750c1f3.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/6816092c-e558-414e-9577-ca3fd66be482.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/819ba7ca-c1b8-4b9c-ab9c-87df43141abd.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/cc306ee4-eb38-4692-bfb8-6dc95e5edc62.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/bb0de696-3422-4504-b54a-c8729b81faa7.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/7e54d405-b72d-427e-aa7f-5d5a953e769a.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/a5a4d717-0b7a-45c8-8cf0-3327d750c1f3.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/6816092c-e558-414e-9577-ca3fd66be482.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/819ba7ca-c1b8-4b9c-ab9c-87df43141abd.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/cc306ee4-eb38-4692-bfb8-6dc95e5edc62.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/bb0de696-3422-4504-b54a-c8729b81faa7.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/7e54d405-b72d-427e-aa7f-5d5a953e769a.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/a5a4d717-0b7a-45c8-8cf0-3327d750c1f3.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/6816092c-e558-414e-9577-ca3fd66be482.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/819ba7ca-c1b8-4b9c-ab9c-87df43141abd.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/cc306ee4-eb38-4692-bfb8-6dc95e5edc62.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/bb0de696-3422-4504-b54a-c8729b81faa7.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/7e54d405-b72d-427e-aa7f-5d5a953e769a.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("assets/fonts/a5a4d717-0b7a-45c8-8cf0-3327d750c1f3.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("assets/fonts/6816092c-e558-414e-9577-ca3fd66be482.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("assets/fonts/819ba7ca-c1b8-4b9c-ab9c-87df43141abd.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("assets/fonts/cc306ee4-eb38-4692-bfb8-6dc95e5edc62.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("assets/fonts/bb0de696-3422-4504-b54a-c8729b81faa7.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("assets/fonts/7e54d405-b72d-427e-aa7f-5d5a953e769a.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/5c7cd248-55c6-4343-9ed7-079ebdbe4fce.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/5675a213-3e80-45a4-bf5f-c0bfd40017c4.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/e0e7a079-a9dc-4e20-b79d-651813cb6885.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/8a497cf4-5a4c-4ea9-9b4a-7f9ae0a9208e.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/c6883713-1aa7-47ff-ad4a-df9973c91de7.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/b41b3962-0395-4c60-8565-8ec5ddd8530e.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/5c7cd248-55c6-4343-9ed7-079ebdbe4fce.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/5675a213-3e80-45a4-bf5f-c0bfd40017c4.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/e0e7a079-a9dc-4e20-b79d-651813cb6885.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/8a497cf4-5a4c-4ea9-9b4a-7f9ae0a9208e.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/c6883713-1aa7-47ff-ad4a-df9973c91de7.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/b41b3962-0395-4c60-8565-8ec5ddd8530e.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/5c7cd248-55c6-4343-9ed7-079ebdbe4fce.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/5675a213-3e80-45a4-bf5f-c0bfd40017c4.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/e0e7a079-a9dc-4e20-b79d-651813cb6885.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/8a497cf4-5a4c-4ea9-9b4a-7f9ae0a9208e.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/c6883713-1aa7-47ff-ad4a-df9973c91de7.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/b41b3962-0395-4c60-8565-8ec5ddd8530e.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+  body{margin:0;}
+  ::selection{background:#c8963e;color:#fff;}
+  input::placeholder, textarea::placeholder{color:#a9a493;}
+</style>
+</helmet>
+
+<div style="position:relative;width:100%;min-height:100vh;background:#f6f3ea;font-family:'Manrope',-apple-system,BlinkMacSystemFont,sans-serif;color:#1c1c1c;">
+
+<div>
+
+  <div style="background:#10233a;color:#fff;padding:{{ headerPadding }};display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:11.5px;color:#9fb2c8;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">{{ todayLabel }}</div>
+      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c8963e;font-weight:700;margin-bottom:8px;">Macro Research Journal</div>
+      <h1 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:{{ headerTitleSize }};font-weight:600;letter-spacing:-0.3px;">US Macro Journal</h1>
+      <div style="font-size:12.5px;color:#9fb2c8;margin-top:6px;font-family:'JetBrains Mono',monospace;">{{ periodLabel }} &nbsp;·&nbsp; {{ overallProgressLabel }}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <img src="assets/avatar.jpg" style="width:{{ avatarSize }};height:{{ avatarSize }};border-radius:50%;object-fit:cover;border:2px solid #c8963e;flex-shrink:0;">
+      <div style="line-height:1.4;white-space:nowrap;flex-shrink:0;">
+        <div style="font-size:{{ headerNameSize }};font-weight:700;white-space:nowrap;">Hassan Emami</div>
+        <div style="font-size:11.5px;color:#9fb2c8;font-family:'JetBrains Mono',monospace;white-space:nowrap;">@H_MACROTRADER</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:sticky;top:0;z-index:20;background:#16324f;color:#fff;padding:{{ toolbarPadding }};display:flex;align-items:center;gap:6px;flex-wrap:{{ toolbarOuterWrap }};box-shadow:0 4px 16px rgba(0,0,0,0.18);">
+    <div style="display:flex;align-items:center;gap:6px;overflow-x:{{ toolbarInnerOverflow }};flex-wrap:{{ toolbarInnerWrap }};flex:{{ toolbarInnerFlex }};min-width:0;">
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+      <label style="font-size:11px;color:#b9cbdd;text-transform:uppercase;letter-spacing:0.5px;">Month</label>
+      <sc-raw-select value="{{ month }}" sc-camel-on-change="{{ onMonthChange }}" style="padding:6px 8px;border-radius:6px;border:none;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        <sc-for list="{{ monthOptions }}" as="m" hint-placeholder-count="12">
+          <option value="{{ m.value }}">{{ m.label }}</option>
+        </sc-for>
+      </sc-raw-select>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+      <label style="font-size:11px;color:#b9cbdd;text-transform:uppercase;letter-spacing:0.5px;">Year</label>
+      <sc-raw-select value="{{ year }}" sc-camel-on-change="{{ onYearChange }}" style="padding:6px 8px;border-radius:6px;border:none;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        <sc-for list="{{ yearOptions }}" as="y" hint-placeholder-count="10">
+          <option value="{{ y.value }}">{{ y.label }}</option>
+        </sc-for>
+      </sc-raw-select>
+    </div>
+    <span style="font-size:12px;color:#8fd6ab;font-family:'JetBrains Mono',monospace;text-align:right;flex-shrink:0;white-space:nowrap;">{{ saveStatus }}</span>
+    <button sc-camel-on-click="{{ expandAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Expand all</button>
+    <button sc-camel-on-click="{{ collapseAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Collapse all</button>
+    <button sc-camel-on-click="{{ startNewEntry }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Start new entry</button>
+    </div>
+    <div style="position:relative;flex-shrink:0;">
+      <button sc-camel-on-click="{{ toggleExportMenu }}" style="white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Export ▾</button>
+      <sc-if value="{{ exportMenuOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);overflow:hidden;min-width:150px;z-index:30;">
+          <button sc-camel-on-click="{{ exportPDF }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;" style-hover="background:#f6f3ea;">Export PDF</button>
+          <button sc-camel-on-click="{{ exportExcel }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Export Excel</button>
+          <button sc-camel-on-click="{{ exportJSON }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Export JSON</button>
+        </div>
+      </sc-if>
+    </div>
+    <button sc-camel-on-click="{{ importJSONPrompt }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Import JSON</button>
+    <button sc-camel-on-click="{{ saveAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 14px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:12px;font-weight:800;cursor:pointer;" style-hover="background:#d9a94f;">Save &amp; Clear</button>
+  </div>
+  <div style="height:0;"></div>
+
+  <div style="max-width:1640px;margin:0 auto;padding:{{ contentPadding }};">
+
+    <sc-if value="{{ viewingBackup }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fdf3d9;border:1px solid #e8cf8a;border-radius:10px;padding:14px 18px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+        <span style="font-size:13px;color:#6b5417;">Viewing backup: <strong>{{ viewingLabel }}</strong> (read-only) — your current entry is safely kept aside.</span>
+        <button sc-camel-on-click="{{ returnToCurrentEntry }}" style="padding:8px 14px;border:none;background:#10233a;color:#fff;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">Return to current entry</button>
+      </div>
+    </sc-if>
+
+    <sc-for list="{{ chapters }}" as="chapter" hint-placeholder-count="8">
+      <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:12px;overflow:hidden;">
+        <div sc-camel-on-click="{{ chapter.onToggle }}" style="padding:{{ chapterHeadPadding }};display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;align-items:baseline;gap:14px;flex:1;min-width:0;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c8963e;font-weight:700;flex-shrink:0;">{{ chapter.index }}</span>
+            <h2 style="margin:0;flex:1;min-width:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:#10233a;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ chapter.title }}</h2>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;flex-shrink:0;">
+            <span style="font-size:11.5px;color:#8a8570;font-family:'JetBrains Mono',monospace;">{{ chapter.progressLabel }}</span>
+            <span style="font-size:14px;color:#8a8570;">{{ chapter.arrowGlyph }}</span>
+          </div>
+        </div>
+        <sc-if value="{{ chapter.isOpen }}" hint-placeholder-val="{{ false }}">
+          <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:8px 14px 16px;display:grid;gap:10px;">
+              <sc-for list="{{ chapter.indicators }}" as="ind" hint-placeholder-count="10">
+                <div style="border:1px solid #e4e0d2;border-radius:10px;padding:12px 14px;background:#fdfdfb;">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px;">
+                    <span style="font-weight:700;font-size:13.5px;">{{ ind.name }}</span>
+                    <span style="font-size:10.5px;color:#8a8570;white-space:nowrap;">{{ ind.freq }}</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                    <input type="text" value="{{ ind.e1 }}" sc-camel-on-change="{{ ind.onE1 }}" sc-camel-read-only="{{ ind.readOnly }}" placeholder="Entry 1" style="width:100%;box-sizing:border-box;padding:11px 10px;border:1px solid #e4e0d2;border-radius:7px;font-size:14px;font-family:'JetBrains Mono',monospace;background:#fff;min-height:44px;">
+                    <input type="text" value="{{ ind.e2 }}" sc-camel-on-change="{{ ind.onE2 }}" sc-camel-read-only="{{ ind.readOnly }}" placeholder="Entry 2" style="width:100%;box-sizing:border-box;padding:11px 10px;border:1px solid #e4e0d2;border-radius:7px;font-size:14px;font-family:'JetBrains Mono',monospace;background:#fff;min-height:44px;">
+                    <input type="text" value="{{ ind.e3 }}" sc-camel-on-change="{{ ind.onE3 }}" sc-camel-read-only="{{ ind.readOnly }}" placeholder="Entry 3" style="width:100%;box-sizing:border-box;padding:11px 10px;border:1px solid #e4e0d2;border-radius:7px;font-size:14px;font-family:'JetBrains Mono',monospace;background:#fff;min-height:44px;">
+                    <input type="text" value="{{ ind.e4 }}" sc-camel-on-change="{{ ind.onE4 }}" sc-camel-read-only="{{ ind.readOnly }}" placeholder="Entry 4" style="width:100%;box-sizing:border-box;padding:11px 10px;border:1px solid #e4e0d2;border-radius:7px;font-size:14px;font-family:'JetBrains Mono',monospace;background:#fff;min-height:44px;">
+                  </div>
+                  <div style="display:flex;justify-content:flex-end;gap:6px;">
+                    <button sc-camel-on-click="{{ ind.onOpenLink }}" title="Open the saved link" style="border:1px solid #e4e0d2;background:#fff;cursor:pointer;font-size:18px;padding:10px 14px;border-radius:7px;min-height:44px;color:{{ ind.pinColor }};">🔗</button>
+                    <button sc-camel-on-click="{{ ind.onEditLink }}" title="Edit link" style="border:1px solid #e4e0d2;background:#fff;cursor:pointer;font-size:15px;padding:10px 12px;border-radius:7px;min-height:44px;color:#8a8570;">✎</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:6px 22px 20px;overflow-x:auto;">
+            <sc-raw-table style="width:100%;border-collapse:collapse;font-size:13.5px;min-width:900px;">
+              <sc-raw-thead><sc-raw-tr>
+                <sc-raw-th style="text-align:left;color:#8a8570;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;padding:8px 8px;border-bottom:1px solid #e4e0d2;width:25%;">Indicator</sc-raw-th>
+                <sc-raw-th style="text-align:left;color:#8a8570;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;padding:8px 8px;border-bottom:1px solid #e4e0d2;width:14%;">Frequency</sc-raw-th>
+                <sc-raw-th style="text-align:left;color:#8a8570;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;padding:8px 8px;border-bottom:1px solid #e4e0d2;">Entry 1</sc-raw-th>
+                <sc-raw-th style="text-align:left;color:#8a8570;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;padding:8px 8px;border-bottom:1px solid #e4e0d2;">Entry 2</sc-raw-th>
+                <sc-raw-th style="text-align:left;color:#8a8570;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;padding:8px 8px;border-bottom:1px solid #e4e0d2;">Entry 3</sc-raw-th>
+                <sc-raw-th style="text-align:left;color:#8a8570;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;padding:8px 8px;border-bottom:1px solid #e4e0d2;">Entry 4</sc-raw-th>
+                <sc-raw-th style="text-align:center;color:#8a8570;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;padding:8px 8px;border-bottom:1px solid #e4e0d2;width:60px;">Link</sc-raw-th>
+              </sc-raw-tr></sc-raw-thead>
+              <sc-raw-tbody>
+                <sc-for list="{{ chapter.indicators }}" as="ind" hint-placeholder-count="10">
+                  <sc-raw-tr style="border-bottom:1px solid #f2f0e6;">
+                    <sc-raw-td style="padding:7px 8px;font-weight:600;vertical-align:top;">{{ ind.name }}</sc-raw-td>
+                    <sc-raw-td style="padding:7px 8px;color:#8a8570;font-size:11.5px;white-space:nowrap;vertical-align:top;">{{ ind.freq }}</sc-raw-td>
+                    <sc-raw-td style="padding:5px 6px;"><input type="text" value="{{ ind.e1 }}" sc-camel-on-change="{{ ind.onE1 }}" sc-camel-read-only="{{ ind.readOnly }}" style="width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid #e4e0d2;border-radius:5px;font-size:13px;font-family:'JetBrains Mono',monospace;background:#fdfdfb;" style-focus="outline:none;border-color:#1d5fa5;"></sc-raw-td>
+                    <sc-raw-td style="padding:5px 6px;"><input type="text" value="{{ ind.e2 }}" sc-camel-on-change="{{ ind.onE2 }}" sc-camel-read-only="{{ ind.readOnly }}" style="width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid #e4e0d2;border-radius:5px;font-size:13px;font-family:'JetBrains Mono',monospace;background:#fdfdfb;" style-focus="outline:none;border-color:#1d5fa5;"></sc-raw-td>
+                    <sc-raw-td style="padding:5px 6px;"><input type="text" value="{{ ind.e3 }}" sc-camel-on-change="{{ ind.onE3 }}" sc-camel-read-only="{{ ind.readOnly }}" style="width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid #e4e0d2;border-radius:5px;font-size:13px;font-family:'JetBrains Mono',monospace;background:#fdfdfb;" style-focus="outline:none;border-color:#1d5fa5;"></sc-raw-td>
+                    <sc-raw-td style="padding:5px 6px;"><input type="text" value="{{ ind.e4 }}" sc-camel-on-change="{{ ind.onE4 }}" sc-camel-read-only="{{ ind.readOnly }}" style="width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid #e4e0d2;border-radius:5px;font-size:13px;font-family:'JetBrains Mono',monospace;background:#fdfdfb;" style-focus="outline:none;border-color:#1d5fa5;"></sc-raw-td>
+                    <sc-raw-td style="padding:5px 6px;text-align:center;white-space:nowrap;">
+                      <button sc-camel-on-click="{{ ind.onOpenLink }}" title="Open the saved link" style="border:none;background:transparent;cursor:pointer;font-size:16px;padding:4px 4px;color:{{ ind.pinColor }};">🔗</button>
+                      <button sc-camel-on-click="{{ ind.onEditLink }}" title="Edit link" style="border:none;background:transparent;cursor:pointer;font-size:13px;padding:4px 4px;color:#8a8570;">✎</button>
+                    </sc-raw-td>
+                  </sc-raw-tr>
+                </sc-for>
+              </sc-raw-tbody>
+            </sc-raw-table>
+          </div>
+          </sc-if>
+        </sc-if>
+      </div>
+    </sc-for>
+
+    <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:16px;overflow:hidden;">
+      <div sc-camel-on-click="{{ onToggleQual }}" style="padding:17px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;">
+        <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:#10233a;font-weight:700;">Macro Conclusion</h2>
+        <span style="font-size:14px;color:#8a8570;">{{ qualArrowGlyph }}</span>
+      </div>
+      <sc-if value="{{ qualOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:18px 22px 22px;display:grid;gap:16px;">
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Current Phase</label>
+            <textarea value="{{ qualPhase }}" sc-camel-on-change="{{ onQualPhaseChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:56px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
+          </div>
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Main Risk</label>
+            <textarea value="{{ qualRisk }}" sc-camel-on-change="{{ onQualRiskChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:56px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
+          </div>
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Main Opportunity</label>
+            <textarea value="{{ qualOpportunity }}" sc-camel-on-change="{{ onQualOpportunityChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:56px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:16px;overflow:hidden;">
+      <div sc-camel-on-click="{{ onToggleMistake }}" style="padding:17px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;">
+        <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:#10233a;font-weight:700;">Thesis Invalidates If / Mistake Log</h2>
+        <span style="font-size:14px;color:#8a8570;">{{ mistakeArrowGlyph }}</span>
+      </div>
+      <sc-if value="{{ mistakeOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:18px 22px 22px;">
+          <textarea value="{{ mistakeLog }}" sc-camel-on-change="{{ onMistakeChange }}" sc-camel-read-only="{{ readOnlyBackup }}" placeholder="What would prove this thesis wrong? What mistakes did you catch this month?" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:16px;overflow:hidden;">
+      <div sc-camel-on-click="{{ onToggleDaily }}" style="padding:17px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;">
+        <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:#10233a;font-weight:700;">Daily Liquidity &amp; Sentiment Tracker</h2>
+        <span style="font-size:14px;color:#8a8570;">{{ dailyArrowGlyph }}</span>
+      </div>
+      <sc-if value="{{ dailyOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:6px 22px 22px;">
+          <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+              <button sc-camel-on-click="{{ onDailyDayPrev }}" style="min-height:44px;min-width:44px;border:1px solid #e4e0d2;background:#fff;border-radius:8px;font-size:16px;cursor:pointer;">‹</button>
+              <sc-raw-select value="{{ dailyDay }}" sc-camel-on-change="{{ onDailyDayChange }}" style="flex:1;padding:11px 10px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:'JetBrains Mono',monospace;min-height:44px;">
+                <sc-for list="{{ dailyDayOptions }}" as="do" hint-placeholder-count="31">
+                  <option value="{{ do.value }}">{{ do.label }}</option>
+                </sc-for>
+              </sc-raw-select>
+              <button sc-camel-on-click="{{ onDailyDayNext }}" style="min-height:44px;min-width:44px;border:1px solid #e4e0d2;background:#fff;border-radius:8px;font-size:16px;cursor:pointer;">›</button>
+            </div>
+            <sc-for list="{{ dailyGroupsMobile }}" as="grp" hint-placeholder-count="4">
+              <div style="margin-bottom:16px;">
+                <div style="font-weight:700;font-size:13px;color:#10233a;margin:0 0 8px;font-family:'Source Serif 4',Georgia,serif;">{{ grp.title }}</div>
+                <div style="display:grid;gap:8px;">
+                  <sc-for list="{{ grp.indicators }}" as="ind" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #e4e0d2;border-radius:8px;padding:10px 12px;background:#fdfdfb;">
+                      <span style="font-size:13px;font-weight:600;">{{ ind.name }}</span>
+                      <input type="text" value="{{ ind.value }}" sc-camel-on-change="{{ ind.onChange }}" sc-camel-read-only="{{ ind.readOnly }}" style="width:90px;box-sizing:border-box;padding:10px;text-align:center;font-size:14px;border:1px solid #e4e0d2;border-radius:7px;font-family:'JetBrains Mono',monospace;background:#fff;min-height:44px;flex-shrink:0;">
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+          <p style="font-size:12px;color:#8a8570;margin:6px 0 14px;">One column per calendar day (1–31). Leave unused columns blank for shorter months.</p>
+          <sc-for list="{{ dailyGroups }}" as="grp" hint-placeholder-count="4">
+            <div style="margin-bottom:18px;">
+              <div style="font-weight:700;font-size:13px;color:#10233a;margin:0 0 8px;font-family:'Source Serif 4',Georgia,serif;">{{ grp.title }}</div>
+              <div style="overflow-x:auto;">
+                <sc-raw-table style="border-collapse:collapse;font-size:12px;min-width:1500px;">
+                  <sc-raw-thead><sc-raw-tr>
+                    <sc-raw-th style="text-align:left;color:#8a8570;font-weight:700;font-size:10.5px;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid #e4e0d2;width:230px;position:sticky;left:0;background:#fff;">Indicator</sc-raw-th>
+                    <sc-for list="{{ dayHeaders }}" as="dh" hint-placeholder-count="31">
+                      <sc-raw-th style="text-align:center;color:#8a8570;font-weight:700;font-size:10.5px;padding:6px 4px;border-bottom:1px solid #e4e0d2;border-right:{{ dh.sep }};white-space:nowrap;">{{ dh.day }}</sc-raw-th>
+                    </sc-for>
+                  </sc-raw-tr></sc-raw-thead>
+                  <sc-raw-tbody>
+                    <sc-for list="{{ grp.indicators }}" as="ind" hint-placeholder-count="4">
+                      <sc-raw-tr style="border-bottom:1px solid #f2f0e6;">
+                        <sc-raw-td style="padding:5px 8px;font-weight:600;font-size:12.5px;white-space:nowrap;position:sticky;left:0;background:#fff;">{{ ind.name }}</sc-raw-td>
+                        <sc-for list="{{ ind.days }}" as="d" hint-placeholder-count="31">
+                          <sc-raw-td style="padding:3px 3px;border-right:{{ d.sep }};"><input type="text" value="{{ d.value }}" sc-camel-on-change="{{ d.onChange }}" sc-camel-read-only="{{ ind.readOnly }}" style="width:42px;box-sizing:border-box;padding:4px 3px;text-align:center;font-size:11px;border:1px solid #e4e0d2;border-radius:4px;font-family:'JetBrains Mono',monospace;background:#fdfdfb;"></sc-raw-td>
+                        </sc-for>
+                      </sc-raw-tr>
+                    </sc-for>
+                  </sc-raw-tbody>
+                </sc-raw-table>
+              </div>
+            </div>
+          </sc-for>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+
+  </div>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script="">
+const CHAPTERS = [
+  { key:"business_cycle", title:"Business Cycle", indicators:[
+    ["Real GDP","QoQ Annualized / YoY"],
+    ["GDPNow (Atlanta Fed)","Weekly (W1-W4)"],
+    ["ISM Manufacturing PMI","Monthly (Level)"],
+    ["ISM Services PMI","Monthly (Level)"],
+    ["Leading Economic Index (LEI)","Monthly (YoY/MoM)"],
+    ["Industrial Production","Monthly (YoY/MoM)"],
+    ["Capacity Utilization","Monthly (Level)"],
+    ["Durable Goods Orders","Monthly (YoY/MoM)"],
+    ["Factory Orders","Monthly (YoY/MoM)"],
+    ["Business Inventories","Monthly (YoY/MoM)"],
+    ["Retail Sales","Monthly (YoY/MoM)"],
+    ["Housing Starts","Monthly (YoY/MoM)"],
+    ["Building Permits","Monthly (YoY/MoM)"],
+    ["New Home Sales","Monthly (YoY/MoM)"],
+    ["Existing Home Sales","Monthly (YoY/MoM)"],
+    ["NAHB Housing Market Index (HMI)","Monthly (Level)"],
+    ["NFIB Small Business Optimism Index","Monthly (Level)"],
+    ["CH-FED Financial Conditions Index (ANFCI)","Weekly (W1-W4)"],
+  ]},
+  { key:"labor_market", title:"Labor Market", indicators:[
+    ["Initial Jobless Claims","Weekly (W1-W4)"],
+    ["Continuing Jobless Claims","Weekly (W1-W4)"],
+    ["Nonfarm Payrolls (NFP)","Monthly (Level)"],
+    ["Unemployment Rate (U-3)","Monthly (Level)"],
+    ["U-6 Unemployment Rate","Monthly (Level)"],
+    ["Labor Force Participation Rate (LFPR)","Monthly (Level)"],
+    ["Average Hourly Earnings (AHE)","Monthly (YoY/MoM)"],
+    ["ADP National Employment Report","Monthly (Level)"],
+    ["JOLTS Job Openings","Monthly (Level)"],
+    ["Employment Cost Index (ECI)","Quarterly (QoQ / YoY)"],
+    ["Challenger Job Cuts","Monthly (Level)"],
+    ["ISM Employment Index","Monthly (Level / MoM Chg)"],
+    ["ADP vs NFP Comparison Framework","Qualitative"],
+  ]},
+  { key:"inflation", title:"Inflation", indicators:[
+    ["CPI","Monthly (YoY/MoM)"],
+    ["Core CPI","Monthly (YoY/MoM)"],
+    ["PPI","Monthly (YoY/MoM)"],
+    ["Core PPI","Monthly (YoY/MoM)"],
+    ["PCE","Monthly (YoY/MoM)"],
+    ["Core PCE","Monthly (YoY/MoM)"],
+    ["Trimmed Mean PCE","Monthly (YoY/MoM)"],
+    ["Import Price Index","Monthly (YoY/MoM)"],
+    ["Shelter Inflation","Monthly (YoY/MoM)"],
+    ["Consumer Inflation Expectation","Monthly (Level)"],
+    ["CPI vs PCE Framework","Qualitative"],
+  ]},
+  { key:"consumer", title:"Consumer", indicators:[
+    ["Retail Sales","Monthly (YoY/MoM)"],
+    ["Core Retail Sales","Monthly (YoY/MoM)"],
+    ["Control Group Retail Sales","Monthly (YoY/MoM)"],
+    ["Personal Income","Monthly (Level)"],
+    ["Personal Spending (PCE)","Monthly (Level)"],
+    ["Personal Savings Rate","Monthly (Level)"],
+    ["Consumer Confidence Index (Conference Board)","Monthly (Level)"],
+    ["University of Michigan Consumer Sentiment","Monthly (Level)"],
+    ["Consumer Credit","Monthly (Level)"],
+    ["Household Debt Service Ratio (DSR)","Quarterly (QoQ / YoY)"],
+    ["Consumer Delinquency Rate","Quarterly (QoQ / YoY)"],
+  ]},
+  { key:"monetary_fiscal", title:"Monetary & Fiscal Policy", indicators:[
+    ["Federal Funds Rate (FFR)","Monthly (Level)"],
+    ["FOMC Decision","Qualitative"],
+    ["Dot Plot (Median Projection)","Quarterly (FOMC SEP)"],
+    ["Federal Reserve Balance Sheet (QE/QT)","Weekly (W1-W4)"],
+    ["Reverse Repo Facility (RRP)","See Daily Tracker Section"],
+    ["Interest on Reserve Balances (IORB)","Monthly (Level)"],
+    ["Discount Rate","Monthly (Level)"],
+    ["Forward Guidance (Tone)","Qualitative"],
+    ["Government Spending (Federal Outlays)","Monthly (Level)"],
+    ["Federal Budget Deficit / Surplus","Monthly (Level)"],
+    ["Treasury Issuance","Weekly (W1-W4)"],
+    ["Tax Receipts","Monthly (Level)"],
+    ["Public Debt Outstanding","See Daily Tracker Section"],
+    ["Interest Expense on Federal Debt","Monthly (Level)"],
+    ["Fiscal Stimulus","Qualitative"],
+    ["Fiscal Austerity","Qualitative"],
+  ]},
+  { key:"liquidity", title:"Liquidity", indicators:[
+    ["Treasury General Account (TGA)","See Daily Tracker Section"],
+    ["Bank Reserves","Weekly (W1-W4)"],
+    ["Money Supply (U.S. M2)","Weekly (W1-W4)"],
+    ["Commercial Bank Credit","Weekly (W1-W4)"],
+    ["Repo Market","See Daily Tracker Section"],
+    ["Secured Overnight Financing Rate (SOFR)","See Daily Tracker Section"],
+    ["Cross-Currency Dollar Liquidity","See Daily Tracker Section"],
+    ["Global Central Bank Liquidity","Monthly (Level)"],
+    ["Reverse Repo Facility (RRP)","See Daily Tracker Section"],
+    ["Federal Reserve Balance Sheet (QE/QT)","Weekly (W1-W4)"],
+  ]},
+  { key:"credit", title:"Credit", indicators:[
+    ["Senior Loan Officer Opinion Survey (SLOOS)","Quarterly"],
+    ["Consumer Credit","Monthly (Level)"],
+    ["Commercial & Industrial Loans (C&I Loans)","Weekly (W1-W4)"],
+    ["Mortgage Credit","Monthly (Level)"],
+    ["Credit Spreads","See Daily Tracker Section"],
+    ["High Yield Spread (HY OAS)","See Daily Tracker Section"],
+    ["Investment Grade Spread","See Daily Tracker Section"],
+    ["Corporate Default Rate","Monthly (Level)"],
+    ["Delinquency Rate (Aggregate)","Quarterly"],
+  ]},
+  { key:"sentiment", title:"Market Sentiment", indicators:[
+    ["VIX (Volatility Index)","See Daily Tracker Section"],
+    ["Put/Call Ratio","See Daily Tracker Section"],
+    ["AAII Sentiment Survey","Weekly (W1-W4)"],
+    ["AAII Bull-Bear Spread","Weekly (W1-W4)"],
+    ["NAAIM Exposure Index","Weekly (W1-W4)"],
+    ["CNN Fear & Greed Index","See Daily Tracker Section"],
+    ["Commitment of Traders (COT Report)","Weekly (W1-W4)"],
+    ["Dealer Positioning (Gamma Exposure)","See Daily Tracker Section"],
+    ["Market Breadth","See Daily Tracker Section"],
+    ["Fund Flows","Weekly (W1-W4)"],
+    ["Financial Conditions Index (FCI)","Weekly (W1-W4)"],
+    ["Credit Spreads","See Daily Tracker Section"],
+    ["MOVE Index (Bond Volatility)","See Daily Tracker Section"],
+    ["Equity Market Valuation Sentiment","Monthly (Level)"],
+  ]},
+];
+
+const DAILY_GROUPS = [
+  { key:"d_monetary", title:"Monetary & Fiscal Policy", indicators:["Reverse Repo Facility (RRP)","Public Debt Outstanding"]},
+  { key:"d_liquidity", title:"Liquidity", indicators:["Treasury General Account (TGA)","Repo Market","Secured Overnight Financing Rate (SOFR)","Cross-Currency Dollar Liquidity"]},
+  { key:"d_credit", title:"Credit", indicators:["Credit Spreads","High Yield Spread (HY OAS)","Investment Grade Spread"]},
+  { key:"d_sentiment", title:"Market Sentiment", indicators:["VIX (Volatility Index)","Put/Call Ratio","CNN Fear & Greed Index","Dealer Positioning (Gamma Exposure)","Market Breadth","MOVE Index (Bond Volatility)"]},
+];
+
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const APP_PASSWORD = "12345";
+
+function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,""); }
+
+class Component extends DCLogic {
+  state = {
+    lockInput: "", lockError: "",
+    year: new Date().getFullYear(), month: new Date().getMonth()+1,
+    entries: {}, qual: {}, daily: {},
+    openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false,
+    viewingBackup: false, viewingLabel: "", savedDraftState: null,
+    saveStatus: "", exportMenuOpen: false,
+    dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,
+  };
+
+  componentDidMount() {
+    this.loadPeriod(this.state.year, this.state.month, true);
+    this.mq = window.matchMedia("(max-width: 720px)");
+    const update = () => this.setState({ isMobile: this.mq.matches });
+    this.mq.addEventListener("change", update);
+    update();
+  }
+
+  storageKey(year, month) { return `macro-journal-${year}-${String(month).padStart(2,"0")}`; }
+
+  loadPeriod(year, month, skipSet) {
+    const key = this.storageKey(year, month);
+    const raw = localStorage.getItem(key);
+    const data = raw ? JSON.parse(raw) : { entries:{}, qual:{}, daily:{} };
+    this.currentKey = key;
+    this.fileHandle = null;
+    this.setState({ year, month, entries: data.entries||{}, qual: data.qual||{}, daily: data.daily||{}, viewingBackup:false, viewingLabel:"" });
+  }
+
+  saveDraft() {
+    localStorage.setItem(this.currentKey, JSON.stringify({ entries: this.state.entries, qual: this.state.qual, daily: this.state.daily }));
+  }
+
+  onEntryChange(id, field, value) {
+    const entries = { ...this.state.entries, [id]: { ...(this.state.entries[id]||{}), [field]: value } };
+    this.setState({ entries }, () => this.saveDraft());
+  }
+
+  onDailyChange(id, day, value) {
+    const daily = { ...this.state.daily, [id]: { ...(this.state.daily[id]||{}), [day]: value } };
+    this.setState({ daily }, () => this.saveDraft());
+  }
+
+  onQualField(field, value) {
+    const qual = { ...this.state.qual, [field]: value };
+    this.setState({ qual }, () => this.saveDraft());
+  }
+
+  toggleChapter(key) {
+    this.setState({ openChapters: { ...this.state.openChapters, [key]: !this.state.openChapters[key] } });
+  }
+
+  expandAll() {
+    const o = {};
+    CHAPTERS.forEach(c => o[c.key] = true);
+    this.setState({ openChapters: o, qualOpen: true, mistakeOpen: true, dailyOpen: true });
+  }
+
+  collapseAll() {
+    this.setState({ openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false });
+  }
+
+  openNoteLink(id) {
+    const link = (this.state.entries[id] && this.state.entries[id].notes) || "";
+    if (!link) { this.editNoteLink(id); return; }
+    window.open(link, "_blank");
+  }
+
+  editNoteLink(id) {
+    const link = (this.state.entries[id] && this.state.entries[id].notes) || "";
+    const val = prompt("Paste or edit the link:", link);
+    if (val !== null) this.onEntryChange(id, "notes", val.trim());
+  }
+
+  flashStatus(msg) {
+    this.setState({ saveStatus: msg });
+    setTimeout(() => this.setState({ saveStatus: "" }), 4000);
+  }
+
+  startNewEntry() {
+    if (!confirm("This clears everything currently on screen (without saving a file). Continue?")) return;
+    localStorage.removeItem(this.currentKey);
+    this.fileHandle = null;
+    this.setState({ entries:{}, qual:{}, daily:{} });
+    this.flashStatus("Cleared — ready for new entry");
+  }
+
+  async downloadOrWriteFile() {
+    const filename = this.currentKey + ".json";
+    const content = JSON.stringify({ entries: this.state.entries, qual: this.state.qual, daily: this.state.daily }, null, 2);
+    if (window.showSaveFilePicker) {
+      try {
+        if (!this.fileHandle || this.fileHandle.name !== filename) {
+          this.fileHandle = await window.showSaveFilePicker({ suggestedName: filename, types: [{ description: "Journal backup", accept: { "application/json": [".json"] } }] });
+        }
+        const writable = await this.fileHandle.createWritable();
+        await writable.write(content);
+        await writable.close();
+        return;
+      } catch (err) {}
+    }
+    const blob = new Blob([content], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async saveAll() {
+    await this.downloadOrWriteFile();
+    localStorage.removeItem(this.currentKey);
+    this.fileHandle = null;
+    this.setState({ entries:{}, qual:{}, daily:{} });
+    this.flashStatus("Saved & cleared " + new Date().toLocaleTimeString());
+  }
+
+  exportJSON() {
+    const content = JSON.stringify({ entries: this.state.entries, qual: this.state.qual, daily: this.state.daily }, null, 2);
+    const blob = new Blob([content], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = this.currentKey + ".json"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  toggleExportMenu() { this.setState({ exportMenuOpen: !this.state.exportMenuOpen }); }
+
+  exportPDF() {
+    this.setState({ exportMenuOpen: false });
+    setTimeout(() => window.print(), 50);
+  }
+
+  exportExcel() {
+    this.setState({ exportMenuOpen: false });
+    const s = this.state;
+    let rows = "";
+    CHAPTERS.forEach(ch => {
+      rows += `<tr><td colspan="6" style="background:#10233a;color:#fff;font-weight:bold;padding:6px;">${ch.title}</td></tr>`;
+      rows += `<tr><th>Indicator</th><th>Frequency</th><th>Entry 1</th><th>Entry 2</th><th>Entry 3</th><th>Entry 4</th><th>Link</th></tr>`;
+      ch.indicators.forEach(([name, freq]) => {
+        const id = ch.key + "__" + slug(name);
+        const e = s.entries[id] || {};
+        rows += `<tr><td>${name}</td><td>${freq}</td><td>${e.e1||""}</td><td>${e.e2||""}</td><td>${e.e3||""}</td><td>${e.e4||""}</td><td>${e.notes||""}</td></tr>`;
+      });
+    });
+    rows += `<tr><td colspan="7" style="background:#10233a;color:#fff;font-weight:bold;padding:6px;">Macro Conclusion</td></tr>`;
+    rows += `<tr><td>Current Phase</td><td colspan="6">${s.qual.phase||""}</td></tr>`;
+    rows += `<tr><td>Main Risk</td><td colspan="6">${s.qual.risk||""}</td></tr>`;
+    rows += `<tr><td>Main Opportunity</td><td colspan="6">${s.qual.opportunity||""}</td></tr>`;
+    rows += `<tr><td>Mistake Log</td><td colspan="6">${s.qual.mistakeLog||""}</td></tr>`;
+    const html = `<html><head><meta charset="UTF-8"></head><body><table border="1">${rows}</table></body></html>`;
+    const blob = new Blob([html], { type: "application/vnd.ms-excel" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = this.currentKey + ".xls"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  importJSONPrompt() {
+    const input = document.createElement("input");
+    input.type = "file"; input.accept = "application/json";
+    input.onchange = () => {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(reader.result);
+          this.savedDraftState = { entries: this.state.entries, qual: this.state.qual, daily: this.state.daily };
+          this.setState({ entries: imported.entries||{}, qual: imported.qual||{}, daily: imported.daily||{}, viewingBackup: true, viewingLabel: file.name });
+        } catch (e) {
+          alert("Couldn't read that file — make sure it's a backup exported from this journal.");
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
+
+  returnToCurrentEntry() {
+    const d = this.savedDraftState || { entries:{}, qual:{}, daily:{} };
+    this.savedDraftState = null;
+    this.setState({ entries: d.entries, qual: d.qual, daily: d.daily, viewingBackup:false, viewingLabel:"" });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const readOnly = s.viewingBackup;
+    const mob = !!s.isMobile;
+
+    const chapters = CHAPTERS.map((ch, i) => {
+      const indicators = ch.indicators.map(([name, freq]) => {
+        const id = ch.key + "__" + slug(name);
+        const e = s.entries[id] || {};
+        return {
+          id, name, freq,
+          e1: e.e1||"", e2: e.e2||"", e3: e.e3||"", e4: e.e4||"", notes: e.notes||"",
+          pinColor: e.notes ? "#c8963e" : "#b8b3a0",
+          readOnly,
+          onE1: (ev)=>this.onEntryChange(id,"e1",ev.target.value),
+          onE2: (ev)=>this.onEntryChange(id,"e2",ev.target.value),
+          onE3: (ev)=>this.onEntryChange(id,"e3",ev.target.value),
+          onE4: (ev)=>this.onEntryChange(id,"e4",ev.target.value),
+          onOpenLink: ()=>this.openNoteLink(id),
+          onEditLink: ()=>this.editNoteLink(id),
+        };
+      });
+      const filled = indicators.filter(ind => ind.e1||ind.e2||ind.e3||ind.e4||ind.notes).length;
+      const isOpen = !!s.openChapters[ch.key];
+      return {
+        key: ch.key, title: ch.title, indicators, isOpen,
+        index: String(i+1).padStart(2,"0"),
+        progressLabel: `${filled}/${indicators.length} filled`,
+        arrowGlyph: isOpen ? "▾" : "▸",
+        onToggle: ()=>this.toggleChapter(ch.key),
+      };
+    });
+
+    const totalIndicators = chapters.reduce((a,c)=>a+c.indicators.length,0);
+    const totalFilled = chapters.reduce((a,c)=>a+c.indicators.filter(ind=>ind.e1||ind.e2||ind.e3||ind.e4||ind.notes).length,0);
+
+    const dailyGroups = DAILY_GROUPS.map(grp => ({
+      title: grp.title,
+      indicators: grp.indicators.map(name => {
+        const id = grp.key + "__" + slug(name);
+        const rec = s.daily[id] || {};
+        const days = [];
+        for (let d=1; d<=31; d++) {
+          days.push({ day:d, value: rec[d]||"", sep: (d%7===0 ? "2px solid #e4e0d2" : "1px solid #f2f0e6"), onChange:(ev)=>this.onDailyChange(id,d,ev.target.value) });
+        }
+        return { name, readOnly, days };
+      }),
+    }));
+
+    const dayHeaders = [];
+    for (let d=1; d<=31; d++) dayHeaders.push({ day:d, sep: (d%7===0 ? "2px solid #e4e0d2" : "1px solid #f2f0e6") });
+
+    const dailyDay = s.dailyDay;
+    const dailyDayOptions = Array.from({length:31},(_,i)=>({value:i+1,label:"Day "+(i+1)}));
+    const dailyGroupsMobile = DAILY_GROUPS.map(grp => ({
+      title: grp.title,
+      indicators: grp.indicators.map(name => {
+        const id = grp.key + "__" + slug(name);
+        const rec = s.daily[id] || {};
+        return { name, readOnly, value: rec[dailyDay]||"", onChange: (ev)=>this.onDailyChange(id,dailyDay,ev.target.value) };
+      }),
+    }));
+
+    return {
+      headerPadding: mob ? "20px 16px" : "30px 44px",
+      headerTitleSize: mob ? "24px" : "34px",
+      headerNameSize: mob ? "14px" : "17px",
+      avatarSize: mob ? "40px" : "56px",
+      toolbarPadding: mob ? "10px 12px" : "14px 44px",
+      contentPadding: mob ? "16px 12px 60px" : "30px 36px 90px",
+      chapterHeadPadding: mob ? "13px 14px" : "17px 24px",
+      isMobile: mob, isDesktop: !mob,
+      toolbarOuterWrap: mob ? "wrap" : "nowrap",
+      toolbarInnerWrap: mob ? "wrap" : "nowrap",
+      toolbarInnerOverflow: mob ? "visible" : "auto",
+      toolbarInnerFlex: mob ? "1 1 100%" : "1",
+      todayLabel: new Date().toLocaleDateString(undefined, { year:"numeric", month:"long", day:"numeric" }),
+      periodLabel: `${MONTHS[s.month-1]} ${s.year}`,
+      overallProgressLabel: `${totalFilled}/${totalIndicators} indicators logged`,
+      month: s.month, year: s.year,
+      monthOptions: MONTHS.map((m,i)=>({value:i+1,label:m})),
+      yearOptions: Array.from({length:12},(_,i)=>s.year-2+i).map(y=>({value:y,label:String(y)})),
+      onMonthChange: (ev)=>this.loadPeriod(s.year, parseInt(ev.target.value)),
+      onYearChange: (ev)=>this.loadPeriod(parseInt(ev.target.value), s.month),
+
+      saveStatus: s.saveStatus,
+      expandAll: ()=>this.expandAll(),
+      collapseAll: ()=>this.collapseAll(),
+      startNewEntry: ()=>this.startNewEntry(),
+      exportJSON: ()=>this.exportJSON(),
+      importJSONPrompt: ()=>this.importJSONPrompt(),
+      saveAll: ()=>this.saveAll(),
+      exportMenuOpen: s.exportMenuOpen,
+      toggleExportMenu: ()=>this.toggleExportMenu(),
+      exportPDF: ()=>this.exportPDF(),
+      exportExcel: ()=>this.exportExcel(),
+
+      viewingBackup: s.viewingBackup, viewingLabel: s.viewingLabel,
+      returnToCurrentEntry: ()=>this.returnToCurrentEntry(),
+
+      chapters,
+
+      qualOpen: s.qualOpen, qualArrowGlyph: s.qualOpen ? "▾" : "▸",
+      onToggleQual: ()=>this.setState({qualOpen: !s.qualOpen}),
+      qualPhase: s.qual.phase||"", qualRisk: s.qual.risk||"", qualOpportunity: s.qual.opportunity||"",
+      onQualPhaseChange: (ev)=>this.onQualField("phase", ev.target.value),
+      onQualRiskChange: (ev)=>this.onQualField("risk", ev.target.value),
+      onQualOpportunityChange: (ev)=>this.onQualField("opportunity", ev.target.value),
+      readOnlyBackup: readOnly,
+
+      mistakeOpen: s.mistakeOpen, mistakeArrowGlyph: s.mistakeOpen ? "▾" : "▸",
+      onToggleMistake: ()=>this.setState({mistakeOpen: !s.mistakeOpen}),
+      mistakeLog: s.qual.mistakeLog||"",
+      onMistakeChange: (ev)=>this.onQualField("mistakeLog", ev.target.value),
+
+      dailyOpen: s.dailyOpen, dailyArrowGlyph: s.dailyOpen ? "▾" : "▸",
+      onToggleDaily: ()=>this.setState({dailyOpen: !s.dailyOpen}),
+      dailyGroups, dayHeaders,
+      dailyDay, dailyDayOptions, dailyGroupsMobile,
+      onDailyDayChange: (ev)=>this.setState({dailyDay: parseInt(ev.target.value)}),
+      onDailyDayPrev: ()=>this.setState({dailyDay: Math.max(1, s.dailyDay-1)}),
+      onDailyDayNext: ()=>this.setState({dailyDay: Math.min(31, s.dailyDay+1)}),
+    };
+  }
+}
+
+</script>
+
+
+</body></html>
