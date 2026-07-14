@@ -138,6 +138,21 @@ function main() {
     .split('style-hover="background:#1a3f6e;"')
     .join('style-hover="background:#d3c088;"');
 
+  // Merge the separate "Expand all" / "Collapse all" toolbar buttons into
+  // one toggle button whose label reflects the current state.
+  template = template.replace(
+    '<button sc-camel-on-click="{{ expandAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Expand all</button>\n    <button sc-camel-on-click="{{ collapseAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Collapse all</button>',
+    '<button sc-camel-on-click="{{ toggleExpandCollapseAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">{{ expandCollapseLabel }}</button>'
+  );
+  template = template.replace(
+    '  expandAll() {\n    const o = {};\n    CHAPTERS.forEach(c => o[c.key] = true);\n    this.setState({ openChapters: o, qualOpen: true, mistakeOpen: true, dailyOpen: true });\n  }\n\n  collapseAll() {\n    this.setState({ openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false });\n  }',
+    '  expandAll() {\n    const o = {};\n    CHAPTERS.forEach(c => o[c.key] = true);\n    this.setState({ openChapters: o, qualOpen: true, mistakeOpen: true, dailyOpen: true });\n  }\n\n  collapseAll() {\n    this.setState({ openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false });\n  }\n\n  isAllExpanded() {\n    const s = this.state;\n    return CHAPTERS.every(c => !!s.openChapters[c.key]) && s.qualOpen && s.mistakeOpen && s.dailyOpen;\n  }\n\n  toggleExpandCollapseAll() {\n    if (this.isAllExpanded()) this.collapseAll();\n    else this.expandAll();\n  }'
+  );
+  template = template.replace(
+    '      saveStatus: s.saveStatus,\n      expandAll: ()=>this.expandAll(),\n      collapseAll: ()=>this.collapseAll(),\n      startNewEntry: ()=>this.startNewEntry(),',
+    '      saveStatus: s.saveStatus,\n      expandCollapseLabel: this.isAllExpanded() ? "Collapse all" : "Expand all",\n      toggleExpandCollapseAll: ()=>this.toggleExpandCollapseAll(),\n      startNewEntry: ()=>this.startNewEntry(),'
+  );
+
   fs.writeFileSync(path.join(OUT_DIR, "index.html"), template);
 
   fs.copyFileSync(

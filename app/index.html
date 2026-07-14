@@ -713,8 +713,7 @@ window.__resources = {
       </sc-raw-select>
     </div>
     <span style="font-size:12px;color:#2f8f5b;font-family:'JetBrains Mono',monospace;text-align:right;flex-shrink:0;white-space:nowrap;">{{ saveStatus }}</span>
-    <button sc-camel-on-click="{{ expandAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Expand all</button>
-    <button sc-camel-on-click="{{ collapseAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Collapse all</button>
+    <button sc-camel-on-click="{{ toggleExpandCollapseAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">{{ expandCollapseLabel }}</button>
     <button sc-camel-on-click="{{ startNewEntry }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Start new entry</button>
     </div>
     <div style="position:relative;flex-shrink:0;">
@@ -1111,6 +1110,16 @@ class Component extends DCLogic {
     this.setState({ openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false });
   }
 
+  isAllExpanded() {
+    const s = this.state;
+    return CHAPTERS.every(c => !!s.openChapters[c.key]) && s.qualOpen && s.mistakeOpen && s.dailyOpen;
+  }
+
+  toggleExpandCollapseAll() {
+    if (this.isAllExpanded()) this.collapseAll();
+    else this.expandAll();
+  }
+
   openNoteLink(id) {
     const link = (this.state.entries[id] && this.state.entries[id].notes) || "";
     if (!link) { this.editNoteLink(id); return; }
@@ -1320,8 +1329,8 @@ class Component extends DCLogic {
       onYearChange: (ev)=>this.loadPeriod(parseInt(ev.target.value), s.month),
 
       saveStatus: s.saveStatus,
-      expandAll: ()=>this.expandAll(),
-      collapseAll: ()=>this.collapseAll(),
+      expandCollapseLabel: this.isAllExpanded() ? "Collapse all" : "Expand all",
+      toggleExpandCollapseAll: ()=>this.toggleExpandCollapseAll(),
       startNewEntry: ()=>this.startNewEntry(),
       exportJSON: ()=>this.exportJSON(),
       importJSONPrompt: ()=>this.importJSONPrompt(),
