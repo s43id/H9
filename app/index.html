@@ -678,26 +678,26 @@ window.__resources = {
 
 <div>
 
-  <div style="background:#10233a;color:#fff;padding:{{ headerPadding }};display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+  <div style="background:#eee3c8;color:#10233a;padding:{{ headerPadding }};display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid #d9c79a;">
     <div>
-      <div style="font-size:11.5px;color:#9fb2c8;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">{{ todayLabel }}</div>
+      <div style="font-size:11.5px;color:#8a7f5c;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">{{ todayLabel }}</div>
       <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c8963e;font-weight:700;margin-bottom:8px;">Macro Research Journal</div>
-      <h1 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:{{ headerTitleSize }};font-weight:600;letter-spacing:-0.3px;">US Macro Journal</h1>
-      <div style="font-size:12.5px;color:#9fb2c8;margin-top:6px;font-family:'JetBrains Mono',monospace;">{{ periodLabel }} &nbsp;·&nbsp; {{ overallProgressLabel }}</div>
+      <h1 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:{{ headerTitleSize }};font-weight:600;letter-spacing:-0.3px;">Macro Economy</h1>
+      <div style="font-size:12.5px;color:#8a7f5c;margin-top:6px;font-family:'JetBrains Mono',monospace;">{{ periodLabel }} &nbsp;·&nbsp; {{ overallProgressLabel }}</div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;">
       <img src="assets/avatar.jpg" style="width:{{ avatarSize }};height:{{ avatarSize }};border-radius:50%;object-fit:cover;border:2px solid #c8963e;flex-shrink:0;">
       <div style="line-height:1.4;white-space:nowrap;flex-shrink:0;">
         <div style="font-size:{{ headerNameSize }};font-weight:700;white-space:nowrap;">Hassan Emami</div>
-        <div style="font-size:11.5px;color:#9fb2c8;font-family:'JetBrains Mono',monospace;white-space:nowrap;">@H_MACROTRADER</div>
+        <div style="font-size:11.5px;color:#8a7f5c;font-family:'JetBrains Mono',monospace;white-space:nowrap;">@H_MACROTRADER</div>
       </div>
     </div>
   </div>
 
-  <div style="position:sticky;top:0;z-index:20;background:#16324f;color:#fff;padding:{{ toolbarPadding }};display:flex;align-items:center;gap:6px;flex-wrap:{{ toolbarOuterWrap }};box-shadow:0 4px 16px rgba(0,0,0,0.18);">
+  <div style="position:sticky;top:0;z-index:20;background:#e2d2a0;color:#10233a;padding:{{ toolbarPadding }};display:flex;align-items:center;gap:6px;flex-wrap:{{ toolbarOuterWrap }};box-shadow:0 4px 16px rgba(0,0,0,0.18);">
     <div style="display:flex;align-items:center;gap:6px;overflow-x:{{ toolbarInnerOverflow }};flex-wrap:{{ toolbarInnerWrap }};flex:{{ toolbarInnerFlex }};min-width:0;">
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-      <label style="font-size:11px;color:#b9cbdd;text-transform:uppercase;letter-spacing:0.5px;">Month</label>
+      <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Month</label>
       <sc-raw-select value="{{ month }}" sc-camel-on-change="{{ onMonthChange }}" style="padding:6px 8px;border-radius:6px;border:none;font-size:13px;font-family:'JetBrains Mono',monospace;">
         <sc-for list="{{ monthOptions }}" as="m" hint-placeholder-count="12">
           <option value="{{ m.value }}">{{ m.label }}</option>
@@ -705,20 +705,20 @@ window.__resources = {
       </sc-raw-select>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-      <label style="font-size:11px;color:#b9cbdd;text-transform:uppercase;letter-spacing:0.5px;">Year</label>
+      <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Year</label>
       <sc-raw-select value="{{ year }}" sc-camel-on-change="{{ onYearChange }}" style="padding:6px 8px;border-radius:6px;border:none;font-size:13px;font-family:'JetBrains Mono',monospace;">
         <sc-for list="{{ yearOptions }}" as="y" hint-placeholder-count="10">
           <option value="{{ y.value }}">{{ y.label }}</option>
         </sc-for>
       </sc-raw-select>
     </div>
-    <span style="font-size:12px;color:#8fd6ab;font-family:'JetBrains Mono',monospace;text-align:right;flex-shrink:0;white-space:nowrap;">{{ saveStatus }}</span>
-    <button sc-camel-on-click="{{ expandAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Expand all</button>
-    <button sc-camel-on-click="{{ collapseAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Collapse all</button>
-    <button sc-camel-on-click="{{ startNewEntry }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Start new entry</button>
+    <span style="font-size:12px;color:#2f8f5b;font-family:'JetBrains Mono',monospace;text-align:right;flex-shrink:0;white-space:nowrap;">{{ saveStatus }}</span>
+    <button sc-camel-on-click="{{ expandAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Expand all</button>
+    <button sc-camel-on-click="{{ collapseAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Collapse all</button>
+    <button sc-camel-on-click="{{ startNewEntry }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Start new entry</button>
     </div>
     <div style="position:relative;flex-shrink:0;">
-      <button sc-camel-on-click="{{ toggleExportMenu }}" style="white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Export ▾</button>
+      <button sc-camel-on-click="{{ toggleExportMenu }}" style="white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Export ▾</button>
       <sc-if value="{{ exportMenuOpen }}" hint-placeholder-val="{{ false }}">
         <div style="position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);overflow:hidden;min-width:150px;z-index:30;">
           <button sc-camel-on-click="{{ exportPDF }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;" style-hover="background:#f6f3ea;">Export PDF</button>
@@ -727,7 +727,7 @@ window.__resources = {
         </div>
       </sc-if>
     </div>
-    <button sc-camel-on-click="{{ importJSONPrompt }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Import JSON</button>
+    <button sc-camel-on-click="{{ importJSONPrompt }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Import JSON</button>
     <button sc-camel-on-click="{{ saveAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 14px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:12px;font-weight:800;cursor:pointer;" style-hover="background:#d9a94f;">Save &amp; Clear</button>
   </div>
   <div style="height:0;"></div>
