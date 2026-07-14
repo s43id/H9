@@ -46,7 +46,7 @@ app.whenReady().then(() => {
           // falls back to a props-only, non-interactive render). Neither
           // relaxation reaches outside this page: there is no remote or
           // user-supplied content anywhere in it.
-          "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'",
+          "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' blob:",
         ],
       },
     });
