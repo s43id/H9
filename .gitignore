@@ -1,0 +1,9 @@
+node_modules/
+dist-electron/
+release/
+android/app/build/
+android/.gradle/
+android/build/
+android/capacitor-cordova-android-plugins/
+*.log
+.DS_Store
