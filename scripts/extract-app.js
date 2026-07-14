@@ -116,6 +116,28 @@ function main() {
     '<button sc-camel-on-click="{{ importJSONPrompt }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #3a5a82;background:transparent;color:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#1a3f6e;">Import JSON</button>\n    <button sc-camel-on-click="{{ saveAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 14px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:12px;font-weight:800;cursor:pointer;" style-hover="background:#d9a94f;">Save &amp; Clear</button>'
   );
 
+  // Rebrand: title text, and the top header/toolbar from navy to a cream
+  // palette that matches the rest of the page (chapters already use cream
+  // #fbfaf4 headers with navy text and gold #c8963e accents).
+  template = template.replace(
+    '<div style="background:#10233a;color:#fff;padding:{{ headerPadding }};display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">\n    <div>\n      <div style="font-size:11.5px;color:#9fb2c8;font-family:\'JetBrains Mono\',monospace;margin-bottom:10px;">{{ todayLabel }}</div>\n      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c8963e;font-weight:700;margin-bottom:8px;">Macro Research Journal</div>\n      <h1 style="margin:0;font-family:\'Source Serif 4\',Georgia,serif;font-size:{{ headerTitleSize }};font-weight:600;letter-spacing:-0.3px;">US Macro Journal</h1>\n      <div style="font-size:12.5px;color:#9fb2c8;margin-top:6px;font-family:\'JetBrains Mono\',monospace;">{{ periodLabel }} &nbsp;·&nbsp; {{ overallProgressLabel }}</div>\n    </div>\n    <div style="display:flex;align-items:center;gap:12px;">\n      <img src="assets/avatar.jpg" style="width:{{ avatarSize }};height:{{ avatarSize }};border-radius:50%;object-fit:cover;border:2px solid #c8963e;flex-shrink:0;">\n      <div style="line-height:1.4;white-space:nowrap;flex-shrink:0;">\n        <div style="font-size:{{ headerNameSize }};font-weight:700;white-space:nowrap;">Hassan Emami</div>\n        <div style="font-size:11.5px;color:#9fb2c8;font-family:\'JetBrains Mono\',monospace;white-space:nowrap;">@H_MACROTRADER</div>\n      </div>\n    </div>\n  </div>\n\n  <div style="position:sticky;top:0;z-index:20;background:#16324f;color:#fff;padding:{{ toolbarPadding }};display:flex;align-items:center;gap:6px;flex-wrap:{{ toolbarOuterWrap }};box-shadow:0 4px 16px rgba(0,0,0,0.18);">',
+    '<div style="background:#eee3c8;color:#10233a;padding:{{ headerPadding }};display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid #d9c79a;">\n    <div>\n      <div style="font-size:11.5px;color:#8a7f5c;font-family:\'JetBrains Mono\',monospace;margin-bottom:10px;">{{ todayLabel }}</div>\n      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c8963e;font-weight:700;margin-bottom:8px;">Macro Research Journal</div>\n      <h1 style="margin:0;font-family:\'Source Serif 4\',Georgia,serif;font-size:{{ headerTitleSize }};font-weight:600;letter-spacing:-0.3px;">Macro Economy</h1>\n      <div style="font-size:12.5px;color:#8a7f5c;margin-top:6px;font-family:\'JetBrains Mono\',monospace;">{{ periodLabel }} &nbsp;·&nbsp; {{ overallProgressLabel }}</div>\n    </div>\n    <div style="display:flex;align-items:center;gap:12px;">\n      <img src="assets/avatar.jpg" style="width:{{ avatarSize }};height:{{ avatarSize }};border-radius:50%;object-fit:cover;border:2px solid #c8963e;flex-shrink:0;">\n      <div style="line-height:1.4;white-space:nowrap;flex-shrink:0;">\n        <div style="font-size:{{ headerNameSize }};font-weight:700;white-space:nowrap;">Hassan Emami</div>\n        <div style="font-size:11.5px;color:#8a7f5c;font-family:\'JetBrains Mono\',monospace;white-space:nowrap;">@H_MACROTRADER</div>\n      </div>\n    </div>\n  </div>\n\n  <div style="position:sticky;top:0;z-index:20;background:#e2d2a0;color:#10233a;padding:{{ toolbarPadding }};display:flex;align-items:center;gap:6px;flex-wrap:{{ toolbarOuterWrap }};box-shadow:0 4px 16px rgba(0,0,0,0.18);">'
+  );
+  template = template
+    .split('color:#b9cbdd;text-transform:uppercase;letter-spacing:0.5px;')
+    .join('color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;');
+  template = template
+    .split("color:#8fd6ab;font-family:'JetBrains Mono',monospace;text-align:right;")
+    .join("color:#2f8f5b;font-family:'JetBrains Mono',monospace;text-align:right;");
+  // These two also recolor the Import JSON button injected just above, which
+  // reused the old navy toolbar-button style.
+  template = template
+    .split('border:1px solid #3a5a82;background:transparent;color:#fff;')
+    .join('border:1px solid #b9a76f;background:transparent;color:#10233a;');
+  template = template
+    .split('style-hover="background:#1a3f6e;"')
+    .join('style-hover="background:#d3c088;"');
+
   fs.writeFileSync(path.join(OUT_DIR, "index.html"), template);
 
   fs.copyFileSync(
