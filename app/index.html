@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html><head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' blob:">
+
 <script>
 window.__resources = {
   "https://unpkg.com/react@18.3.1/umd/react.production.min.js": "assets/react.production.min.js",
@@ -9,6 +11,7 @@ window.__resources = {
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/capacitor-shim.js"></script>
 <script src="assets/dc-runtime.js"></script>
 </head>
 <body>

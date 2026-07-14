@@ -5,5 +5,7 @@ android/app/build/
 android/.gradle/
 android/build/
 android/capacitor-cordova-android-plugins/
+android/local.properties
+resources/
 *.log
 .DS_Store

@@ -76,6 +76,33 @@ function main() {
     ""
   );
 
+  // Same policy Electron sets via response header (electron/main.ts) — baked
+  // in here too so the Capacitor/Android build and a plain browser preview
+  // get it as well. unsafe-inline: the page's own inline <script> tags.
+  // unsafe-eval: dc-runtime evaluates the app's component class via
+  // `new Function(...)` — confirmed required by testing with it omitted
+  // (app silently falls back to a non-interactive, props-only render).
+  // connect-src blob:: the Android shim (capacitor-shim.js) does
+  // fetch(anchor.href) on the app's own blob: export URLs to read their
+  // content back out — confirmed required by testing with it omitted
+  // (fetch was refused, export silently failed on Android).
+  const csp =
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+    "style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' blob:";
+  template = template.replace(
+    /(<head[^>]*>)/i,
+    `$1\n<meta http-equiv="Content-Security-Policy" content="${csp}">\n`
+  );
+
+  // Android WebView has no File System Access API and no working
+  // window.print(); this shim is a no-op everywhere else (guarded on
+  // window.Capacitor.isNativePlatform()) so desktop/Electron/browser
+  // behavior is untouched. See app/assets/capacitor-shim.js.
+  template = template.replace(
+    /(<script src="assets\/dc-runtime\.js"><\/script>)/,
+    `<script src="assets/capacitor-shim.js"></script>\n$1`
+  );
+
   // The source file wires exportPDF/exportExcel to toolbar buttons but leaves
   // exportJSON/importJSONPrompt as dead code (no button calls them, in the
   // original file too). Add the two missing buttons so JSON export/import is
@@ -90,6 +117,12 @@ function main() {
   );
 
   fs.writeFileSync(path.join(OUT_DIR, "index.html"), template);
+
+  fs.copyFileSync(
+    path.join(__dirname, "static", "capacitor-shim.js"),
+    path.join(OUT_DIR, "assets", "capacitor-shim.js")
+  );
+
   console.log(`Extracted ${Object.keys(nameMap).length} assets to ${OUT_DIR}`);
 }
 

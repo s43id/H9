@@ -1,0 +1,9 @@
+{
+  "appId": "com.hassanemami.macrojournal",
+  "appName": "Macro Journal",
+  "webDir": "app",
+  "backgroundColor": "#10233a",
+  "android": {
+    "backgroundColor": "#10233a"
+  }
+}
