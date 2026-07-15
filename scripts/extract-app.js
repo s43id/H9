@@ -238,6 +238,18 @@ function main() {
     "<div class=\"no-print\" style=\"position:fixed;inset:0;background:rgba(16,35,58,0.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;\">"
   );
 
+  // PDF export ("جهت کاغذ اشتباهه" — wrong paper orientation report): the
+  // regular chapter indicator tables (min-width:900px) and the Daily
+  // Tracker (min-width:1500px) are both wrapped in overflow-x:auto divs
+  // for on-screen horizontal scrolling — wider than a portrait page, so
+  // without neutralizing them for print they got clipped/scrolled off
+  // (which reads as "landscape" even though the page itself is portrait).
+  // Let them shrink to fit the page width instead.
+  template = template.replace(
+    "  @media print {\n    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }\n    .no-print { display: none !important; }\n  }\n</style>",
+    "  @media print {\n    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }\n    .no-print { display: none !important; }\n    /* Both the regular chapter indicator tables (min-width:900px) and the\n       Daily Tracker (min-width:1500px) rely on overflow-x:auto for\n       horizontal scrolling on screen — wider than a portrait page, so\n       without this they were getting clipped/scrolled off in the PDF\n       (reported as looking landscape/cut off). Let them shrink to fit\n       instead. */\n    div[style*=\"overflow-x:auto\"] { overflow: visible !important; }\n    table[style*=\"min-width:900px\"] { min-width: 0 !important; width: 100% !important; table-layout: auto !important; }\n    table[style*=\"min-width:1500px\"] { min-width: 0 !important; width: 100% !important; font-size: 6px !important; }\n  }\n</style>"
+  );
+
   // Restyle Export Excel to match the app's own navy/cream/gold palette
   // and section layout (banner chapter headers, alternating row shading,
   // wide Notes column) instead of a plain bordered table — per a

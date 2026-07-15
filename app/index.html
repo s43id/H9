@@ -675,6 +675,15 @@ window.__resources = {
   @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
     .no-print { display: none !important; }
+    /* Both the regular chapter indicator tables (min-width:900px) and the
+       Daily Tracker (min-width:1500px) rely on overflow-x:auto for
+       horizontal scrolling on screen — wider than a portrait page, so
+       without this they were getting clipped/scrolled off in the PDF
+       (reported as looking landscape/cut off). Let them shrink to fit
+       instead. */
+    div[style*="overflow-x:auto"] { overflow: visible !important; }
+    table[style*="min-width:900px"] { min-width: 0 !important; width: 100% !important; table-layout: auto !important; }
+    table[style*="min-width:1500px"] { min-width: 0 !important; width: 100% !important; font-size: 6px !important; }
   }
 </style>
 </helmet>
