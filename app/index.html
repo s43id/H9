@@ -672,6 +672,10 @@ window.__resources = {
   body{margin:0;}
   ::selection{background:#c8963e;color:#fff;}
   input::placeholder, textarea::placeholder{color:#a9a493;}
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+    .no-print { display: none !important; }
+  }
 </style>
 </helmet>
 
@@ -695,7 +699,7 @@ window.__resources = {
     </div>
   </div>
 
-  <div style="position:sticky;top:0;z-index:20;background:#e2d2a0;color:#10233a;padding:{{ toolbarPadding }};display:flex;align-items:center;gap:6px;flex-wrap:{{ toolbarOuterWrap }};box-shadow:0 4px 16px rgba(0,0,0,0.18);">
+  <div class="no-print" style="position:sticky;top:0;z-index:20;background:#e2d2a0;color:#10233a;padding:{{ toolbarPadding }};display:flex;align-items:center;gap:6px;flex-wrap:{{ toolbarOuterWrap }};box-shadow:0 4px 16px rgba(0,0,0,0.18);">
     <div style="display:flex;align-items:center;gap:6px;overflow-x:{{ toolbarInnerOverflow }};flex-wrap:{{ toolbarInnerWrap }};flex:{{ toolbarInnerFlex }};min-width:0;">
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
       <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Month</label>
@@ -911,7 +915,7 @@ window.__resources = {
 </div>
 
 <sc-if value="{{ dbOpenListOpen }}" hint-placeholder-val="{{ false }}">
-  <div style="position:fixed;inset:0;background:rgba(16,35,58,0.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div class="no-print" style="position:fixed;inset:0;background:rgba(16,35,58,0.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;">
     <div style="background:#fff;border-radius:12px;max-width:420px;width:100%;max-height:70vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
       <div style="padding:16px 20px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;">
         <strong style="color:#10233a;font-size:15px;">Open saved entry</strong>
@@ -1209,22 +1213,76 @@ class Component extends DCLogic {
   exportExcel() {
     this.setState({ menuOpen: false });
     const s = this.state;
+
+    // Same trick as before (an HTML table served as .xls — Excel opens it
+    // directly, no binary XLSX writer needed), just styled to match the
+    // app's own navy/cream/gold palette and section layout instead of a
+    // plain bordered table.
+    const NAVY = "#10233a", GOLD = "#c8963e", HEAD_BG = "#eee3c8",
+      COL_BG = "#f3ead8", ROW_ALT = "#f6f3ea", BORDER = "#e4e0d2";
+    const esc = (v) => String(v == null ? "" : v)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    const bannerRow = (label, span) =>
+      `<tr><td colspan="${span}" style="background:${NAVY};color:#ffffff;font-weight:bold;font-size:13px;padding:8px 10px;">${esc(label)}</td></tr>`;
+    const colHeadRow = (cols) =>
+      `<tr>${cols.map(c => `<th style="background:${COL_BG};color:${NAVY};font-weight:bold;font-size:11px;text-align:left;padding:5px 8px;border:1px solid ${BORDER};">${esc(c)}</th>`).join("")}</tr>`;
+    const td = (v, bg, extra) =>
+      `<td style="background:${bg};padding:5px 8px;border:1px solid ${BORDER};${extra||""}">${esc(v)}</td>`;
+
     let rows = "";
-    CHAPTERS.forEach(ch => {
-      rows += `<tr><td colspan="6" style="background:#10233a;color:#fff;font-weight:bold;padding:6px;">${ch.title}</td></tr>`;
-      rows += `<tr><th>Indicator</th><th>Frequency</th><th>Entry 1</th><th>Entry 2</th><th>Entry 3</th><th>Entry 4</th><th>Link</th></tr>`;
-      ch.indicators.forEach(([name, freq]) => {
+    rows += `<tr><td colspan="7" style="background:${HEAD_BG};padding:14px 10px 4px;">`
+      + `<div style="font-size:10px;letter-spacing:2px;color:${GOLD};font-weight:bold;">MACRO RESEARCH JOURNAL</div>`
+      + `<div style="font-size:20px;color:${NAVY};font-weight:bold;">Macro Economy</div>`
+      + `</td></tr>`;
+    rows += `<tr><td colspan="7" style="background:${HEAD_BG};padding:0 10px 14px;color:${NAVY};font-size:11px;">${esc(this.currentLabel)}</td></tr>`;
+    rows += `<tr><td colspan="7" style="height:8px;"></td></tr>`;
+
+    CHAPTERS.forEach((ch, i) => {
+      rows += bannerRow(String(i + 1).padStart(2, "0") + "  " + ch.title, 7);
+      rows += colHeadRow(["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4", "Notes"]);
+      ch.indicators.forEach(([name, freq], idx) => {
         const id = ch.key + "__" + slug(name);
         const e = s.entries[id] || {};
-        rows += `<tr><td>${name}</td><td>${freq}</td><td>${e.e1||""}</td><td>${e.e2||""}</td><td>${e.e3||""}</td><td>${e.e4||""}</td><td>${e.notes||""}</td></tr>`;
+        const bg = idx % 2 ? ROW_ALT : "#ffffff";
+        rows += "<tr>"
+          + td(name, bg, "font-weight:bold;")
+          + td(freq, bg, "color:#6b6b6b;font-size:11px;")
+          + td(e.e1, bg) + td(e.e2, bg) + td(e.e3, bg) + td(e.e4, bg) + td(e.notes, bg)
+          + "</tr>";
+      });
+      rows += `<tr><td colspan="7" style="height:6px;"></td></tr>`;
+    });
+
+    // 09 — Daily Liquidity & Sentiment Tracker, one column per day (1-31),
+    // matching how it's numbered and laid out in the app itself.
+    rows += bannerRow("09  Daily Liquidity & Sentiment Tracker", 7);
+    DAILY_GROUPS.forEach((grp, gi) => {
+      rows += `<tr><td colspan="7" style="background:${gi ? "#ffffff" : ROW_ALT};font-weight:bold;color:${NAVY};padding:6px 8px;">${esc(grp.title)}</td></tr>`;
+      const dayHeaders = ["Indicator"];
+      for (let d = 1; d <= 31; d++) dayHeaders.push(String(d));
+      rows += `<tr>${dayHeaders.map(h => `<th style="background:${COL_BG};color:${NAVY};font-weight:bold;font-size:10px;text-align:center;padding:4px;border:1px solid ${BORDER};">${esc(h)}</th>`).join("")}</tr>`;
+      grp.indicators.forEach((name, idx) => {
+        const id = grp.key + "__" + slug(name);
+        const rec = s.daily[id] || {};
+        const bg = idx % 2 ? ROW_ALT : "#ffffff";
+        let r = "<tr>" + td(name, bg, "font-weight:bold;white-space:nowrap;");
+        for (let d = 1; d <= 31; d++) r += td(rec[d], bg, "text-align:center;font-size:10px;");
+        rows += r + "</tr>";
       });
     });
-    rows += `<tr><td colspan="7" style="background:#10233a;color:#fff;font-weight:bold;padding:6px;">Macro Conclusion</td></tr>`;
-    rows += `<tr><td>Current Phase</td><td colspan="6">${s.qual.phase||""}</td></tr>`;
-    rows += `<tr><td>Main Risk</td><td colspan="6">${s.qual.risk||""}</td></tr>`;
-    rows += `<tr><td>Main Opportunity</td><td colspan="6">${s.qual.opportunity||""}</td></tr>`;
-    rows += `<tr><td>Mistake Log</td><td colspan="6">${s.qual.mistakeLog||""}</td></tr>`;
-    const html = `<html><head><meta charset="UTF-8"></head><body><table border="1">${rows}</table></body></html>`;
+    rows += `<tr><td colspan="7" style="height:6px;"></td></tr>`;
+
+    rows += bannerRow("Macro Conclusion", 7);
+    rows += "<tr>" + td("Current Phase", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.phase)}</td></tr>`;
+    rows += "<tr>" + td("Main Risk", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.risk)}</td></tr>`;
+    rows += "<tr>" + td("Main Opportunity", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.opportunity)}</td></tr>`;
+    rows += `<tr><td colspan="7" style="height:6px;"></td></tr>`;
+
+    rows += bannerRow("Thesis Invalidates If / Mistake Log", 7);
+    rows += `<tr><td colspan="7" style="padding:8px;border:1px solid ${BORDER};">${esc(s.qual.mistakeLog)}</td></tr>`;
+
+    const html = `<html><head><meta charset="UTF-8"></head><body><table cellspacing="0" style="border-collapse:collapse;font-family:Calibri,Arial,sans-serif;">${rows}</table></body></html>`;
     const blob = new Blob([html], { type: "application/vnd.ms-excel" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
