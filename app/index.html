@@ -11,6 +11,7 @@ window.__resources = {
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/exceljs.min.js"></script>
 <script src="assets/db-bridge.js"></script>
 <script src="assets/capacitor-shim.js"></script>
 <script src="assets/dc-runtime.js"></script>
@@ -1239,96 +1240,140 @@ class Component extends DCLogic {
     });
   }
 
-  exportExcel() {
+  async exportExcel() {
     this.setState({ menuOpen: false });
     const s = this.state;
 
-    // Same trick as before (an HTML table served as .xls — Excel opens it
-    // directly, no binary XLSX writer needed), styled to match the app's
-    // own navy/cream/gold palette. Two separate <table> elements (not one
-    // continuous table): the main 7-column sections and the 32-column
-    // (Indicator + 31 days) Daily Tracker can't share a column grid —
-    // Excel's HTML-to-XLS converter computes column widths once per table,
-    // so mixing 7-cell and 32-cell rows in the same table made it guess
-    // badly and produce huge, misaligned columns across the whole sheet.
-    const NAVY = "#10233a", GOLD = "#c8963e", HEAD_BG = "#eee3c8",
-      COL_BG = "#f3ead8", ROW_ALT = "#f6f3ea", BORDER = "#e4e0d2";
-    const esc = (v) => String(v == null ? "" : v)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    // Real binary XLSX via ExcelJS (assets/exceljs.min.js), not the old
+    // HTML-table-served-as-.xls trick — modern Excel content-sniffs the
+    // file and refuses that trick with a "format and extension don't
+    // match" warning. Two worksheets rather than one: a real worksheet's
+    // column widths are set once per column index for the whole sheet, so
+    // the main 7-column sections and the 32-column (Indicator + 31 days)
+    // Daily Tracker can't share one sheet without one of them getting the
+    // wrong widths.
+    const NAVY = "FF10233A", GOLD = "FFC8963E", HEAD_BG = "FFEEE3C8",
+      COL_BG = "FFF3EAD8", ROW_ALT = "FFF6F3EA", WHITE = "FFFFFFFF", BORDER = "FFE4E0D2";
+    const thinBorder = { style: "thin", color: { argb: BORDER } };
+    const cellBorder = { top: thinBorder, left: thinBorder, bottom: thinBorder, right: thinBorder };
+    const fill = (argb) => ({ type: "pattern", pattern: "solid", fgColor: { argb } });
 
-    const bannerRow = (label, span) =>
-      `<tr><td colspan="${span}" style="background:${NAVY};color:#ffffff;font-weight:bold;font-size:13px;padding:8px 10px;">${esc(label)}</td></tr>`;
-    const colHeadRow = (cols, size) =>
-      `<tr>${cols.map(c => `<th style="background:${COL_BG};color:${NAVY};font-weight:bold;font-size:${size||11}px;text-align:${size?"center":"left"};padding:5px 8px;border:1px solid ${BORDER};">${esc(c)}</th>`).join("")}</tr>`;
-    const td = (v, bg, extra) =>
-      `<td style="background:${bg};padding:5px 8px;border:1px solid ${BORDER};${extra||""}">${esc(v)}</td>`;
-    const colgroup = (widths) =>
-      `<colgroup>${widths.map(w => `<col style="width:${w}px;">`).join("")}</colgroup>`;
+    const wb = new ExcelJS.Workbook();
+    wb.creator = "Macro Economy";
+    wb.created = new Date();
 
-    let main = colgroup([200, 160, 85, 85, 85, 85, 190]);
-    main += `<tr><td colspan="7" style="background:${HEAD_BG};padding:14px 10px 4px;">`
-      + `<div style="font-size:10px;letter-spacing:2px;color:${GOLD};font-weight:bold;">MACRO RESEARCH JOURNAL</div>`
-      + `<div style="font-size:20px;color:${NAVY};font-weight:bold;">Macro Economy</div>`
-      + `</td></tr>`;
-    main += `<tr><td colspan="7" style="background:${HEAD_BG};padding:0 10px 14px;color:${NAVY};font-size:11px;">${esc(this.currentLabel)}</td></tr>`;
-    main += `<tr><td colspan="7" style="height:8px;"></td></tr>`;
+    const banner = (ws, label, span) => {
+      const row = ws.addRow([label]);
+      ws.mergeCells(row.number, 1, row.number, span);
+      const cell = row.getCell(1);
+      cell.fill = fill(NAVY);
+      cell.font = { bold: true, size: 13, color: { argb: WHITE } };
+      cell.alignment = { vertical: "middle" };
+      row.height = 22;
+      return row;
+    };
+    const colHead = (ws, cols, size) => {
+      const row = ws.addRow(cols);
+      row.eachCell((cell) => {
+        cell.fill = fill(COL_BG);
+        cell.font = { bold: true, size: size || 11, color: { argb: NAVY } };
+        cell.alignment = { horizontal: size ? "center" : "left", vertical: "middle" };
+        cell.border = cellBorder;
+      });
+      return row;
+    };
+    const dataRow = (ws, values, alt, opts) => {
+      const row = ws.addRow(values);
+      row.eachCell((cell, col) => {
+        cell.fill = fill(alt ? ROW_ALT : WHITE);
+        cell.border = cellBorder;
+        if (opts && opts.bold1 && col === 1) cell.font = { bold: true };
+        if (opts && opts.centerFrom && col >= opts.centerFrom) {
+          cell.alignment = { horizontal: "center" };
+          cell.font = Object.assign({ size: 10 }, cell.font);
+        }
+      });
+      return row;
+    };
+
+    // --- Journal sheet: title, chapters 1-8, Macro Conclusion, Mistake Log ---
+    const journal = wb.addWorksheet("Journal");
+    journal.columns = [
+      { width: 30 }, { width: 22 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 34 },
+    ];
+
+    const titleRow = journal.addRow(["MACRO RESEARCH JOURNAL"]);
+    journal.mergeCells(titleRow.number, 1, titleRow.number, 7);
+    titleRow.getCell(1).fill = fill(HEAD_BG);
+    titleRow.getCell(1).font = { bold: true, size: 10, color: { argb: GOLD } };
+    const nameRow = journal.addRow(["Macro Economy"]);
+    journal.mergeCells(nameRow.number, 1, nameRow.number, 7);
+    nameRow.getCell(1).fill = fill(HEAD_BG);
+    nameRow.getCell(1).font = { bold: true, size: 20, color: { argb: NAVY } };
+    const labelRow = journal.addRow([this.currentLabel]);
+    journal.mergeCells(labelRow.number, 1, labelRow.number, 7);
+    labelRow.getCell(1).fill = fill(HEAD_BG);
+    labelRow.getCell(1).font = { size: 11, color: { argb: NAVY } };
+    journal.addRow([]);
 
     CHAPTERS.forEach((ch, i) => {
-      main += bannerRow(String(i + 1).padStart(2, "0") + "  " + ch.title, 7);
-      main += colHeadRow(["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4", "Notes"]);
+      banner(journal, String(i + 1).padStart(2, "0") + "  " + ch.title, 7);
+      colHead(journal, ["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4", "Notes"]);
       ch.indicators.forEach(([name, freq], idx) => {
         const id = ch.key + "__" + slug(name);
         const e = s.entries[id] || {};
-        const bg = idx % 2 ? ROW_ALT : "#ffffff";
-        main += "<tr>"
-          + td(name, bg, "font-weight:bold;")
-          + td(freq, bg, "color:#6b6b6b;font-size:11px;")
-          + td(e.e1, bg) + td(e.e2, bg) + td(e.e3, bg) + td(e.e4, bg) + td(e.notes, bg)
-          + "</tr>";
+        dataRow(journal, [name, freq, e.e1 || "", e.e2 || "", e.e3 || "", e.e4 || "", e.notes || ""], idx % 2 === 1, { bold1: true });
       });
-      main += `<tr><td colspan="7" style="height:6px;"></td></tr>`;
+      journal.addRow([]);
     });
 
-    let daily = colgroup([200].concat(Array(31).fill(32)));
-    daily += bannerRow("09  Daily Liquidity & Sentiment Tracker", 32);
-    DAILY_GROUPS.forEach((grp, gi) => {
-      if (gi) daily += `<tr><td colspan="32" style="height:10px;"></td></tr>`;
-      daily += `<tr><td colspan="32" style="background:${gi ? "#ffffff" : ROW_ALT};font-weight:bold;color:${NAVY};padding:6px 8px;">${esc(grp.title)}</td></tr>`;
+    banner(journal, "Macro Conclusion", 7);
+    [["Current Phase", s.qual.phase], ["Main Risk", s.qual.risk], ["Main Opportunity", s.qual.opportunity]].forEach(([label, val]) => {
+      const row = journal.addRow([label, val || ""]);
+      journal.mergeCells(row.number, 2, row.number, 7);
+      row.getCell(1).fill = fill(HEAD_BG);
+      row.getCell(1).font = { bold: true };
+      for (let c = 1; c <= 7; c++) row.getCell(c).border = cellBorder;
+    });
+    journal.addRow([]);
+    banner(journal, "Thesis Invalidates If / Mistake Log", 7);
+    const mistakeRow = journal.addRow([s.qual.mistakeLog || ""]);
+    journal.mergeCells(mistakeRow.number, 1, mistakeRow.number, 7);
+    mistakeRow.alignment = { wrapText: true, vertical: "top" };
+    for (let c = 1; c <= 7; c++) mistakeRow.getCell(c).border = cellBorder;
+
+    // --- Daily Tracker sheet: 09, one column per day (1-31) ---
+    const daily = wb.addWorksheet("Daily Tracker");
+    daily.columns = [{ width: 24 }].concat(Array(31).fill({ width: 5 }));
+    banner(daily, "09  Daily Liquidity & Sentiment Tracker", 32);
+    DAILY_GROUPS.forEach((grp) => {
+      const groupRow = daily.addRow([grp.title]);
+      daily.mergeCells(groupRow.number, 1, groupRow.number, 32);
+      groupRow.getCell(1).fill = fill(COL_BG);
+      groupRow.getCell(1).font = { bold: true, color: { argb: NAVY } };
       const dayHeaders = ["Indicator"];
       for (let d = 1; d <= 31; d++) dayHeaders.push(String(d));
-      daily += colHeadRow(dayHeaders, 10);
+      colHead(daily, dayHeaders, 10);
       grp.indicators.forEach((name, idx) => {
         const id = grp.key + "__" + slug(name);
         const rec = s.daily[id] || {};
-        const bg = idx % 2 ? ROW_ALT : "#ffffff";
-        let r = "<tr>" + td(name, bg, "font-weight:bold;white-space:nowrap;");
-        for (let d = 1; d <= 31; d++) r += td(rec[d], bg, "text-align:center;font-size:10px;");
-        daily += r + "</tr>";
+        const vals = [name];
+        for (let d = 1; d <= 31; d++) vals.push(rec[d] || "");
+        dataRow(daily, vals, idx % 2 === 1, { bold1: true, centerFrom: 2 });
       });
     });
 
-    let tail = colgroup([200, 160, 85, 85, 85, 85, 190]);
-    tail += bannerRow("Macro Conclusion", 7);
-    tail += "<tr>" + td("Current Phase", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.phase)}</td></tr>`;
-    tail += "<tr>" + td("Main Risk", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.risk)}</td></tr>`;
-    tail += "<tr>" + td("Main Opportunity", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.opportunity)}</td></tr>`;
-    tail += `<tr><td colspan="7" style="height:6px;"></td></tr>`;
-    tail += bannerRow("Thesis Invalidates If / Mistake Log", 7);
-    tail += `<tr><td colspan="7" style="padding:8px;border:1px solid ${BORDER};">${esc(s.qual.mistakeLog)}</td></tr>`;
-
-    const table = (inner) => `<table cellspacing="0" style="border-collapse:collapse;table-layout:fixed;font-family:Calibri,Arial,sans-serif;">${inner}</table>`;
-    // A block-level spacer (e.g. a <div style="height:...">) between
-    // consecutive <table>s gets collapsed away by Excel's HTML-to-XLS
-    // conversion — it only reliably respects row height inside an actual
-    // <table>, which is why every table in this export is separated by one
-    // of these rather than plain HTML spacing.
-    const tableGap = table(`<tr><td style="border:none;height:16px;">&nbsp;</td></tr>`);
-    const html = `<html><head><meta charset="UTF-8"></head><body>${table(main)}${tableGap}${table(daily)}${tableGap}${table(tail)}</body></html>`;
-    const blob = new Blob([html], { type: "application/vnd.ms-excel" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = this.currentLabel + ".xls"; a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const buffer = await wb.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = this.currentLabel + ".xlsx"; a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("[exportExcel] failed:", err);
+      this.flashStatus("Excel export failed — see console");
+    }
   }
 
   renderVals() {
