@@ -1207,6 +1207,15 @@ class Component extends DCLogic {
 
   exportPDF() {
     this.setState({ menuOpen: false });
+    if (window.electronPrint) {
+      window.electronPrint.exportPDF(this.currentLabel + ".pdf").then((res) => {
+        this.flashStatus(res && res.ok ? "PDF saved" : "PDF export cancelled");
+      }).catch((err) => {
+        console.error("[exportPDF] failed:", err);
+        this.flashStatus("PDF export failed — see console");
+      });
+      return;
+    }
     setTimeout(() => window.print(), 50);
   }
 
