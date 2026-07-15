@@ -95,7 +95,16 @@ function registerPrintHandler(): void {
       filters: [{ name: "PDF", extensions: ["pdf"] }],
     });
     if (result.canceled || !result.filePath) return { ok: false };
-    const pdfBuffer = await win.webContents.printToPDF({ printBackground: true });
+    // landscape:false is already the documented default — set explicitly
+    // per a report of the PDF coming out landscape (root cause was more
+    // likely wide tables (min-width:900px/1500px) getting clipped rather
+    // than true orientation, now handled by @media print in app/index.html,
+    // but pinning this removes any doubt).
+    const pdfBuffer = await win.webContents.printToPDF({
+      printBackground: true,
+      landscape: false,
+      pageSize: "A4",
+    });
     await fs.writeFile(result.filePath, pdfBuffer);
     return { ok: true };
   });
