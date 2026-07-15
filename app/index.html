@@ -12,6 +12,8 @@ window.__resources = {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="assets/exceljs.min.js"></script>
+<script src="assets/jspdf.umd.min.js"></script>
+<script src="assets/jspdf.plugin.autotable.min.js"></script>
 <script src="assets/db-bridge.js"></script>
 <script src="assets/capacitor-shim.js"></script>
 <script src="assets/dc-runtime.js"></script>
@@ -1215,43 +1217,174 @@ class Component extends DCLogic {
     else if (action === "restore") this.restoreDb();
   }
 
-  exportPDF() {
-    // Sections are collapsed by default and there's no "Expand all" button
-    // anymore — printing/PDF-ing without expanding first only captures
-    // whatever happens to already be open on screen (chapter titles and
-    // progress counts, no actual data), which is what got reported. Force
-    // everything open first, matching what the old Expand all button did,
-    // then wait for that render before printing.
-    const openChapters = {};
-    CHAPTERS.forEach(c => openChapters[c.key] = true);
-    this.setState({ menuOpen: false, openChapters, qualOpen: true, mistakeOpen: true, dailyOpen: true }, () => {
-      setTimeout(() => {
-        if (window.electronPrint) {
-          window.electronPrint.exportPDF(this.currentLabel + ".pdf").then((res) => {
-            this.flashStatus(res && res.ok ? "PDF saved" : "PDF export cancelled");
-          }).catch((err) => {
-            console.error("[exportPDF] failed:", err);
-            this.flashStatus("PDF export failed — see console");
-          });
-          return;
-        }
-        window.print();
-      }, 80);
+  // Shared content model for both Export Excel and Export PDF, so the two
+  // formats always show the same data laid out the same way — Export PDF
+  // used to screenshot whatever was currently expanded on screen via
+  // window.print(), which was fragile (needed every section force-opened
+  // first) and produced an OS print dialog on Windows. Reading straight
+  // from state means neither format depends on UI state at all.
+  buildReportSections() {
+    const s = this.state;
+    const sections = [];
+    CHAPTERS.forEach((ch, i) => {
+      sections.push({
+        type: "table",
+        banner: String(i + 1).padStart(2, "0") + "  " + ch.title,
+        cols: ["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4", "Notes"],
+        rows: ch.indicators.map(([name, freq]) => {
+          const id = ch.key + "__" + slug(name);
+          const e = s.entries[id] || {};
+          return [name, freq, e.e1 || "", e.e2 || "", e.e3 || "", e.e4 || "", e.notes || ""];
+        }),
+      });
     });
+    sections.push({
+      type: "daily",
+      banner: "09  Daily Liquidity & Sentiment Tracker",
+      groups: DAILY_GROUPS.map((grp) => ({
+        title: grp.title,
+        rows: grp.indicators.map((name) => {
+          const id = grp.key + "__" + slug(name);
+          const rec = s.daily[id] || {};
+          const vals = [name];
+          for (let d = 1; d <= 31; d++) vals.push(rec[d] || "");
+          return vals;
+        }),
+      })),
+    });
+    sections.push({
+      type: "table",
+      banner: "Macro Conclusion",
+      rows2col: [
+        ["Current Phase", s.qual.phase || ""],
+        ["Main Risk", s.qual.risk || ""],
+        ["Main Opportunity", s.qual.opportunity || ""],
+      ],
+    });
+    sections.push({
+      type: "note",
+      banner: "Thesis Invalidates If / Mistake Log",
+      text: s.qual.mistakeLog || "",
+    });
+    return sections;
+  }
+
+  exportPDF() {
+    this.setState({ menuOpen: false });
+    try {
+      // Built straight from the same section model as Export Excel (see
+      // buildReportSections above), styled to match — a real table-based
+      // PDF instead of a screenshot of the page, and no OS print dialog.
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+      const NAVY = [16, 35, 58], GOLD = [200, 150, 62], HEAD_BG = [238, 227, 200],
+        COL_BG = [243, 234, 216], ROW_ALT = [246, 243, 234], LINE = [228, 224, 210];
+      const marginX = 28;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      let y = 36;
+
+      const ensureSpace = (needed) => {
+        if (y + needed > pageHeight - 28) { doc.addPage(); y = 36; }
+      };
+      const banner = (label) => {
+        ensureSpace(24);
+        doc.setFillColor(...NAVY);
+        doc.rect(marginX, y, pageWidth - marginX * 2, 18, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFont(undefined, "bold");
+        doc.setFontSize(10);
+        doc.text(label, marginX + 6, y + 12.5);
+        y += 24;
+      };
+
+      doc.setFillColor(...HEAD_BG);
+      doc.rect(0, 0, pageWidth, 64, "F");
+      doc.setTextColor(...GOLD);
+      doc.setFont(undefined, "bold");
+      doc.setFontSize(8);
+      doc.text("MACRO RESEARCH JOURNAL", marginX, 22);
+      doc.setTextColor(...NAVY);
+      doc.setFontSize(18);
+      doc.text("Macro Economy", marginX, 42);
+      doc.setFont(undefined, "normal");
+      doc.setFontSize(10);
+      doc.text(this.currentLabel, marginX, 56);
+      y = 80;
+
+      this.buildReportSections().forEach((sec) => {
+        banner(sec.banner);
+        if (sec.type === "table" && sec.cols) {
+          doc.autoTable({
+            startY: y, margin: { left: marginX, right: marginX },
+            head: [sec.cols], body: sec.rows, theme: "grid",
+            styles: { fontSize: 8, cellPadding: 3, lineColor: LINE, lineWidth: 0.5, textColor: [28, 28, 28] },
+            headStyles: { fillColor: COL_BG, textColor: NAVY, fontStyle: "bold" },
+            alternateRowStyles: { fillColor: ROW_ALT },
+            columnStyles: { 0: { fontStyle: "bold", cellWidth: 85 }, 1: { cellWidth: 60, fontSize: 7 } },
+          });
+          y = doc.lastAutoTable.finalY + 12;
+        } else if (sec.type === "table" && sec.rows2col) {
+          doc.autoTable({
+            startY: y, margin: { left: marginX, right: marginX },
+            body: sec.rows2col, theme: "grid",
+            styles: { fontSize: 9, cellPadding: 4, lineColor: LINE },
+            columnStyles: { 0: { fillColor: HEAD_BG, fontStyle: "bold", cellWidth: 110 } },
+          });
+          y = doc.lastAutoTable.finalY + 12;
+        } else if (sec.type === "daily") {
+          sec.groups.forEach((grp) => {
+            ensureSpace(18);
+            doc.setFillColor(...COL_BG);
+            doc.rect(marginX, y, pageWidth - marginX * 2, 14, "F");
+            doc.setTextColor(...NAVY);
+            doc.setFont(undefined, "bold");
+            doc.setFontSize(8);
+            doc.text(grp.title, marginX + 4, y + 10);
+            y += 16;
+            const head = ["Indicator"];
+            for (let d = 1; d <= 31; d++) head.push(String(d));
+            doc.autoTable({
+              startY: y, margin: { left: marginX, right: marginX },
+              head: [head], body: grp.rows, theme: "grid",
+              styles: { fontSize: 4.5, cellPadding: 1, lineColor: LINE, lineWidth: 0.25, halign: "center", textColor: [28, 28, 28] },
+              headStyles: { fillColor: COL_BG, textColor: NAVY, fontStyle: "bold" },
+              alternateRowStyles: { fillColor: ROW_ALT },
+              columnStyles: { 0: { fontStyle: "bold", halign: "left", cellWidth: 55, fontSize: 6 } },
+            });
+            y = doc.lastAutoTable.finalY + 8;
+          });
+        } else if (sec.type === "note") {
+          ensureSpace(40);
+          doc.autoTable({
+            startY: y, margin: { left: marginX, right: marginX },
+            body: [[sec.text]], theme: "grid",
+            styles: { fontSize: 9, cellPadding: 6, lineColor: LINE },
+          });
+          y = doc.lastAutoTable.finalY + 12;
+        }
+      });
+
+      const blob = doc.output("blob");
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = this.currentLabel + ".pdf"; a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("[exportPDF] failed:", err);
+      this.flashStatus("PDF export failed — see console");
+    }
   }
 
   async exportExcel() {
     this.setState({ menuOpen: false });
-    const s = this.state;
 
     // Real binary XLSX via ExcelJS (assets/exceljs.min.js), not the old
     // HTML-table-served-as-.xls trick — modern Excel content-sniffs the
     // file and refuses that trick with a "format and extension don't
-    // match" warning. Two worksheets rather than one: a real worksheet's
-    // column widths are set once per column index for the whole sheet, so
-    // the main 7-column sections and the 32-column (Indicator + 31 days)
-    // Daily Tracker can't share one sheet without one of them getting the
-    // wrong widths.
+    // match" warning. Single worksheet: chapters, Daily Tracker, and
+    // Macro Conclusion all stacked in one sheet/tab rather than split
+    // across separate sheets.
     const NAVY = "FF10233A", GOLD = "FFC8963E", HEAD_BG = "FFEEE3C8",
       COL_BG = "FFF3EAD8", ROW_ALT = "FFF6F3EA", WHITE = "FFFFFFFF", BORDER = "FFE4E0D2";
     const thinBorder = { style: "thin", color: { argb: BORDER } };
@@ -1296,11 +1429,14 @@ class Component extends DCLogic {
       return row;
     };
 
-    // --- Journal sheet: title, chapters 1-8, Macro Conclusion, Mistake Log ---
+    // One sheet, 32 columns wide (Indicator + 31 days is the widest
+    // section) — the first 7 columns double up for both the main
+    // 7-column sections and days 1-6 of the Daily Tracker, the rest
+    // (days 7-31) get a narrow width of their own.
     const journal = wb.addWorksheet("Journal");
     journal.columns = [
-      { width: 30 }, { width: 22 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 34 },
-    ];
+      { width: 28 }, { width: 16 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 30 },
+    ].concat(Array(25).fill({ width: 6 }));
 
     const titleRow = journal.addRow(["MACRO RESEARCH JOURNAL"]);
     journal.mergeCells(titleRow.number, 1, titleRow.number, 7);
@@ -1316,51 +1452,42 @@ class Component extends DCLogic {
     labelRow.getCell(1).font = { size: 11, color: { argb: NAVY } };
     journal.addRow([]);
 
-    CHAPTERS.forEach((ch, i) => {
-      banner(journal, String(i + 1).padStart(2, "0") + "  " + ch.title, 7);
-      colHead(journal, ["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4", "Notes"]);
-      ch.indicators.forEach(([name, freq], idx) => {
-        const id = ch.key + "__" + slug(name);
-        const e = s.entries[id] || {};
-        dataRow(journal, [name, freq, e.e1 || "", e.e2 || "", e.e3 || "", e.e4 || "", e.notes || ""], idx % 2 === 1, { bold1: true });
-      });
-      journal.addRow([]);
-    });
-
-    banner(journal, "Macro Conclusion", 7);
-    [["Current Phase", s.qual.phase], ["Main Risk", s.qual.risk], ["Main Opportunity", s.qual.opportunity]].forEach(([label, val]) => {
-      const row = journal.addRow([label, val || ""]);
-      journal.mergeCells(row.number, 2, row.number, 7);
-      row.getCell(1).fill = fill(HEAD_BG);
-      row.getCell(1).font = { bold: true };
-      for (let c = 1; c <= 7; c++) row.getCell(c).border = cellBorder;
-    });
-    journal.addRow([]);
-    banner(journal, "Thesis Invalidates If / Mistake Log", 7);
-    const mistakeRow = journal.addRow([s.qual.mistakeLog || ""]);
-    journal.mergeCells(mistakeRow.number, 1, mistakeRow.number, 7);
-    mistakeRow.alignment = { wrapText: true, vertical: "top" };
-    for (let c = 1; c <= 7; c++) mistakeRow.getCell(c).border = cellBorder;
-
-    // --- Daily Tracker sheet: 09, one column per day (1-31) ---
-    const daily = wb.addWorksheet("Daily Tracker");
-    daily.columns = [{ width: 24 }].concat(Array(31).fill({ width: 5 }));
-    banner(daily, "09  Daily Liquidity & Sentiment Tracker", 32);
-    DAILY_GROUPS.forEach((grp) => {
-      const groupRow = daily.addRow([grp.title]);
-      daily.mergeCells(groupRow.number, 1, groupRow.number, 32);
-      groupRow.getCell(1).fill = fill(COL_BG);
-      groupRow.getCell(1).font = { bold: true, color: { argb: NAVY } };
-      const dayHeaders = ["Indicator"];
-      for (let d = 1; d <= 31; d++) dayHeaders.push(String(d));
-      colHead(daily, dayHeaders, 10);
-      grp.indicators.forEach((name, idx) => {
-        const id = grp.key + "__" + slug(name);
-        const rec = s.daily[id] || {};
-        const vals = [name];
-        for (let d = 1; d <= 31; d++) vals.push(rec[d] || "");
-        dataRow(daily, vals, idx % 2 === 1, { bold1: true, centerFrom: 2 });
-      });
+    this.buildReportSections().forEach((sec) => {
+      if (sec.type === "table" && sec.cols) {
+        banner(journal, sec.banner, 7);
+        colHead(journal, sec.cols);
+        sec.rows.forEach((row, idx) => dataRow(journal, row, idx % 2 === 1, { bold1: true }));
+        journal.addRow([]);
+      } else if (sec.type === "table" && sec.rows2col) {
+        banner(journal, sec.banner, 7);
+        sec.rows2col.forEach(([label, val]) => {
+          const row = journal.addRow([label, val]);
+          journal.mergeCells(row.number, 2, row.number, 7);
+          row.getCell(1).fill = fill(HEAD_BG);
+          row.getCell(1).font = { bold: true };
+          for (let c = 1; c <= 7; c++) row.getCell(c).border = cellBorder;
+        });
+        journal.addRow([]);
+      } else if (sec.type === "daily") {
+        banner(journal, sec.banner, 32);
+        sec.groups.forEach((grp) => {
+          const groupRow = journal.addRow([grp.title]);
+          journal.mergeCells(groupRow.number, 1, groupRow.number, 32);
+          groupRow.getCell(1).fill = fill(COL_BG);
+          groupRow.getCell(1).font = { bold: true, color: { argb: NAVY } };
+          const dayHeaders = ["Indicator"];
+          for (let d = 1; d <= 31; d++) dayHeaders.push(String(d));
+          colHead(journal, dayHeaders, 10);
+          grp.rows.forEach((row, idx) => dataRow(journal, row, idx % 2 === 1, { bold1: true, centerFrom: 2 }));
+        });
+        journal.addRow([]);
+      } else if (sec.type === "note") {
+        banner(journal, sec.banner, 7);
+        const noteRow = journal.addRow([sec.text]);
+        journal.mergeCells(noteRow.number, 1, noteRow.number, 7);
+        noteRow.alignment = { wrapText: true, vertical: "top" };
+        for (let c = 1; c <= 7; c++) noteRow.getCell(c).border = cellBorder;
+      }
     });
 
     try {
