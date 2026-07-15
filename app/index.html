@@ -721,15 +721,18 @@ window.__resources = {
         </sc-for>
       </sc-raw-select>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-      <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Year</label>
-      <sc-raw-select value="{{ year }}" sc-camel-on-change="{{ onYearChange }}" style="padding:6px 8px;border-radius:6px;border:none;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        <sc-for list="{{ yearOptions }}" as="y" hint-placeholder-count="10">
-          <option value="{{ y.value }}">{{ y.label }}</option>
-        </sc-for>
-      </sc-raw-select>
-    </div>
     <span style="font-size:12px;color:#2f8f5b;font-family:'JetBrains Mono',monospace;text-align:right;flex-shrink:0;white-space:nowrap;">{{ saveStatus }}</span>
+    </div>
+    <div style="position:relative;display:flex;align-items:center;gap:6px;flex-shrink:0;">
+      <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Year</label>
+      <button sc-camel-on-click="{{ toggleYearPicker }}" style="padding:6px 8px;border-radius:6px;border:none;font-size:13px;font-family:'JetBrains Mono',monospace;background:#fff;color:#10233a;cursor:pointer;min-width:64px;text-align:left;">{{ year }} ▾</button>
+      <sc-if value="{{ yearPickerOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:100%;left:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);max-height:240px;overflow-y:auto;min-width:90px;z-index:1000;">
+          <sc-for list="{{ yearOptions }}" as="y" hint-placeholder-count="10">
+            <button id="year-opt-{{ y.value }}" sc-camel-on-click="{{ y.onSelect }}" style="display:block;width:100%;text-align:left;padding:8px 14px;border:none;background:{{ y.bg }};color:#10233a;font-size:13px;font-family:'JetBrains Mono',monospace;cursor:pointer;" style-hover="background:#f6f3ea;">{{ y.label }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
     </div>
     <div style="position:relative;flex-shrink:0;margin-left:auto;">
       <button sc-camel-on-click="{{ toggleMenu }}" title="Menu" style="white-space:nowrap;padding:7px 14px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:15px;font-weight:600;cursor:pointer;line-height:1;" style-hover="background:#d3c088;">☰</button>
@@ -1085,6 +1088,7 @@ class Component extends DCLogic {
     entries: {}, qual: {}, daily: {},
     openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false,
     saveStatus: "", menuOpen: false, dbOpenListOpen: false, dbList: [],
+    yearPickerOpen: false,
     dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,
   };
 
@@ -1166,6 +1170,26 @@ class Component extends DCLogic {
 
   toggleMenu() { this.setState({ menuOpen: !this.state.menuOpen }); }
 
+  toggleYearPicker() {
+    const opening = !this.state.yearPickerOpen;
+    this.setState({ yearPickerOpen: opening }, () => {
+      // The year list runs from 2000-2200 — jump it to the current
+      // selection on open instead of always starting at 2000, so
+      // scrolling further (up toward 2200) is the only thing needed to
+      // reach later years.
+      if (!opening) return;
+      setTimeout(() => {
+        const el = document.getElementById("year-opt-" + this.state.year);
+        if (el) el.scrollIntoView({ block: "center" });
+      }, 0);
+    });
+  }
+
+  selectYear(y) {
+    this.setState({ yearPickerOpen: false });
+    this.loadPeriod(y, this.state.month);
+  }
+
   async openDbList() {
     const list = await window.journalDB.list();
     this.setState({ dbList: list, dbOpenListOpen: true, menuOpen: false });
@@ -1230,11 +1254,11 @@ class Component extends DCLogic {
       sections.push({
         type: "table",
         banner: String(i + 1).padStart(2, "0") + "  " + ch.title,
-        cols: ["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4", "Notes"],
+        cols: ["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4"],
         rows: ch.indicators.map(([name, freq]) => {
           const id = ch.key + "__" + slug(name);
           const e = s.entries[id] || {};
-          return [name, freq, e.e1 || "", e.e2 || "", e.e3 || "", e.e4 || "", e.notes || ""];
+          return [name, freq, e.e1 || "", e.e2 || "", e.e3 || "", e.e4 || ""];
         }),
       });
     });
@@ -1294,7 +1318,7 @@ class Component extends DCLogic {
       };
 
       doc.setFillColor(...HEAD_BG);
-      doc.rect(0, 0, pageWidth, 64, "F");
+      doc.rect(0, 0, pageWidth, 68, "F");
       doc.setTextColor(...GOLD);
       doc.setFont(undefined, "bold");
       doc.setFontSize(8);
@@ -1302,10 +1326,9 @@ class Component extends DCLogic {
       doc.setTextColor(...NAVY);
       doc.setFontSize(18);
       doc.text("Macro Economy", marginX, 42);
-      doc.setFont(undefined, "normal");
-      doc.setFontSize(10);
-      doc.text(this.currentLabel, marginX, 56);
-      y = 80;
+      doc.setFontSize(13);
+      doc.text(this.currentLabel, marginX, 60);
+      y = 84;
 
       this.buildReportSections().forEach((sec) => {
         banner(sec.banner);
@@ -1417,45 +1440,41 @@ class Component extends DCLogic {
     };
 
     // One sheet, 32 columns wide (Indicator + 31 days is the widest
-    // section) — the first 7 columns double up for both the main
-    // 7-column sections and days 1-6 of the Daily Tracker, the rest
-    // (days 7-31) get a narrow width of their own.
+    // section) — columns 2-32 (Frequency/Entry 1-4 in the main tables,
+    // day 1-31 in the Daily Tracker) share one uniform width so the
+    // Daily Tracker doesn't have a handful of wide day columns next to
+    // a run of narrow ones.
     const journal = wb.addWorksheet("Journal");
-    journal.columns = [
-      { width: 28 }, { width: 16 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 30 },
-    ].concat(Array(25).fill({ width: 6 }));
+    journal.columns = [{ width: 28 }].concat(Array(31).fill({ width: 12 }));
 
     const titleRow = journal.addRow(["MACRO RESEARCH JOURNAL"]);
-    journal.mergeCells(titleRow.number, 1, titleRow.number, 7);
+    journal.mergeCells(titleRow.number, 1, titleRow.number, 6);
     titleRow.getCell(1).fill = fill(HEAD_BG);
     titleRow.getCell(1).font = { bold: true, size: 10, color: { argb: GOLD } };
     const nameRow = journal.addRow(["Macro Economy"]);
-    journal.mergeCells(nameRow.number, 1, nameRow.number, 7);
+    journal.mergeCells(nameRow.number, 1, nameRow.number, 6);
     nameRow.getCell(1).fill = fill(HEAD_BG);
     nameRow.getCell(1).font = { bold: true, size: 20, color: { argb: NAVY } };
     const labelRow = journal.addRow([this.currentLabel]);
-    journal.mergeCells(labelRow.number, 1, labelRow.number, 7);
+    journal.mergeCells(labelRow.number, 1, labelRow.number, 6);
     labelRow.getCell(1).fill = fill(HEAD_BG);
-    labelRow.getCell(1).font = { size: 11, color: { argb: NAVY } };
+    labelRow.getCell(1).font = { bold: true, size: 14, color: { argb: NAVY } };
     journal.addRow([]);
 
     this.buildReportSections().forEach((sec) => {
       if (sec.type === "table" && sec.cols) {
-        // Notes dropped from the Excel export per request — cols/rows end
-        // in Notes (see buildReportSections), so slicing the last column
-        // off leaves Indicator/Frequency/Entry 1-4.
         banner(journal, sec.banner, 6);
-        colHead(journal, sec.cols.slice(0, -1));
-        sec.rows.forEach((row, idx) => dataRow(journal, row.slice(0, -1), idx % 2 === 1, { bold1: true }));
+        colHead(journal, sec.cols);
+        sec.rows.forEach((row, idx) => dataRow(journal, row, idx % 2 === 1, { bold1: true }));
         journal.addRow([]);
       } else if (sec.type === "table" && sec.rows2col) {
-        banner(journal, sec.banner, 7);
+        banner(journal, sec.banner, 6);
         sec.rows2col.forEach(([label, val]) => {
           const row = journal.addRow([label, val]);
-          journal.mergeCells(row.number, 2, row.number, 7);
+          journal.mergeCells(row.number, 2, row.number, 6);
           row.getCell(1).fill = fill(HEAD_BG);
           row.getCell(1).font = { bold: true };
-          for (let c = 1; c <= 7; c++) row.getCell(c).border = cellBorder;
+          for (let c = 1; c <= 6; c++) row.getCell(c).border = cellBorder;
         });
         journal.addRow([]);
       } else if (sec.type === "daily") {
@@ -1568,9 +1587,14 @@ class Component extends DCLogic {
       overallProgressLabel: `${totalFilled}/${totalIndicators} indicators logged`,
       month: s.month, year: s.year,
       monthOptions: MONTHS.map((m,i)=>({value:i+1,label:m})),
-      yearOptions: Array.from({length:12},(_,i)=>s.year-2+i).map(y=>({value:y,label:String(y)})),
+      yearPickerOpen: s.yearPickerOpen,
+      toggleYearPicker: ()=>this.toggleYearPicker(),
+      yearOptions: Array.from({length:201},(_,i)=>2000+i).map(y=>({
+        value: y, label: String(y),
+        bg: y === s.year ? "#f6f3ea" : "#fff",
+        onSelect: ()=>this.selectYear(y),
+      })),
       onMonthChange: (ev)=>this.loadPeriod(s.year, parseInt(ev.target.value)),
-      onYearChange: (ev)=>this.loadPeriod(parseInt(ev.target.value), s.month),
 
       saveStatus: s.saveStatus,
       menuOpen: s.menuOpen,
