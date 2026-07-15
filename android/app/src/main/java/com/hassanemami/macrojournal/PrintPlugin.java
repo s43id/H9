@@ -21,14 +21,28 @@ public class PrintPlugin extends Plugin {
 
     @PluginMethod
     public void print(PluginCall call) {
-        PrintManager printManager = (PrintManager) getContext().getSystemService(Context.PRINT_SERVICE);
-        if (printManager == null) {
-            call.reject("Print service unavailable on this device");
-            return;
-        }
-        String jobName = "Macro Journal";
-        PrintDocumentAdapter adapter = getBridge().getWebView().createPrintDocumentAdapter(jobName);
-        printManager.print(jobName, adapter, new PrintAttributes.Builder().build());
-        call.resolve();
+        // Capacitor dispatches plugin methods on a background handler
+        // thread (Bridge.taskHandler), not the UI thread. WebView and
+        // PrintManager.print() both require the main thread — calling them
+        // from here directly throws CalledFromWrongThreadException, an
+        // uncaught RuntimeException that crashes the whole app. Confirmed
+        // by reading Bridge.callPluginMethod() in the capacitor-android
+        // source; this sandbox can't run the Android build to catch it by
+        // testing.
+        getActivity().runOnUiThread(() -> {
+            try {
+                PrintManager printManager = (PrintManager) getContext().getSystemService(Context.PRINT_SERVICE);
+                if (printManager == null) {
+                    call.reject("Print service unavailable on this device");
+                    return;
+                }
+                String jobName = "Macro Journal";
+                PrintDocumentAdapter adapter = getBridge().getWebView().createPrintDocumentAdapter(jobName);
+                printManager.print(jobName, adapter, new PrintAttributes.Builder().build());
+                call.resolve();
+            } catch (Exception ex) {
+                call.reject("Print failed: " + ex.getMessage(), ex);
+            }
+        });
     }
 }
