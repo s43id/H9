@@ -721,15 +721,18 @@ window.__resources = {
         </sc-for>
       </sc-raw-select>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-      <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Year</label>
-      <sc-raw-select value="{{ year }}" sc-camel-on-change="{{ onYearChange }}" style="padding:6px 8px;border-radius:6px;border:none;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        <sc-for list="{{ yearOptions }}" as="y" hint-placeholder-count="10">
-          <option value="{{ y.value }}">{{ y.label }}</option>
-        </sc-for>
-      </sc-raw-select>
-    </div>
     <span style="font-size:12px;color:#2f8f5b;font-family:'JetBrains Mono',monospace;text-align:right;flex-shrink:0;white-space:nowrap;">{{ saveStatus }}</span>
+    </div>
+    <div style="position:relative;display:flex;align-items:center;gap:6px;flex-shrink:0;">
+      <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Year</label>
+      <button sc-camel-on-click="{{ toggleYearPicker }}" style="padding:6px 8px;border-radius:6px;border:none;font-size:13px;font-family:'JetBrains Mono',monospace;background:#fff;color:#10233a;cursor:pointer;min-width:64px;text-align:left;">{{ year }} ▾</button>
+      <sc-if value="{{ yearPickerOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:100%;left:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);max-height:240px;overflow-y:auto;min-width:90px;z-index:1000;">
+          <sc-for list="{{ yearOptions }}" as="y" hint-placeholder-count="10">
+            <button id="year-opt-{{ y.value }}" sc-camel-on-click="{{ y.onSelect }}" style="display:block;width:100%;text-align:left;padding:8px 14px;border:none;background:{{ y.bg }};color:#10233a;font-size:13px;font-family:'JetBrains Mono',monospace;cursor:pointer;" style-hover="background:#f6f3ea;">{{ y.label }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
     </div>
     <div style="position:relative;flex-shrink:0;margin-left:auto;">
       <button sc-camel-on-click="{{ toggleMenu }}" title="Menu" style="white-space:nowrap;padding:7px 14px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:15px;font-weight:600;cursor:pointer;line-height:1;" style-hover="background:#d3c088;">☰</button>
@@ -1085,6 +1088,7 @@ class Component extends DCLogic {
     entries: {}, qual: {}, daily: {},
     openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false,
     saveStatus: "", menuOpen: false, dbOpenListOpen: false, dbList: [],
+    yearPickerOpen: false,
     dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,
   };
 
@@ -1165,6 +1169,26 @@ class Component extends DCLogic {
   }
 
   toggleMenu() { this.setState({ menuOpen: !this.state.menuOpen }); }
+
+  toggleYearPicker() {
+    const opening = !this.state.yearPickerOpen;
+    this.setState({ yearPickerOpen: opening }, () => {
+      // The year list runs from 2000-2200 — jump it to the current
+      // selection on open instead of always starting at 2000, so
+      // scrolling further (up toward 2200) is the only thing needed to
+      // reach later years.
+      if (!opening) return;
+      setTimeout(() => {
+        const el = document.getElementById("year-opt-" + this.state.year);
+        if (el) el.scrollIntoView({ block: "center" });
+      }, 0);
+    });
+  }
+
+  selectYear(y) {
+    this.setState({ yearPickerOpen: false });
+    this.loadPeriod(y, this.state.month);
+  }
 
   async openDbList() {
     const list = await window.journalDB.list();
@@ -1416,13 +1440,12 @@ class Component extends DCLogic {
     };
 
     // One sheet, 32 columns wide (Indicator + 31 days is the widest
-    // section) — the first 6 columns double up for both the main
-    // 6-column sections and days 1-5 of the Daily Tracker, the rest
-    // (days 6-31) get a narrow width of their own.
+    // section) — columns 2-32 (Frequency/Entry 1-4 in the main tables,
+    // day 1-31 in the Daily Tracker) share one uniform width so the
+    // Daily Tracker doesn't have a handful of wide day columns next to
+    // a run of narrow ones.
     const journal = wb.addWorksheet("Journal");
-    journal.columns = [
-      { width: 28 }, { width: 16 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 },
-    ].concat(Array(26).fill({ width: 6 }));
+    journal.columns = [{ width: 28 }].concat(Array(31).fill({ width: 12 }));
 
     const titleRow = journal.addRow(["MACRO RESEARCH JOURNAL"]);
     journal.mergeCells(titleRow.number, 1, titleRow.number, 6);
@@ -1564,9 +1587,14 @@ class Component extends DCLogic {
       overallProgressLabel: `${totalFilled}/${totalIndicators} indicators logged`,
       month: s.month, year: s.year,
       monthOptions: MONTHS.map((m,i)=>({value:i+1,label:m})),
-      yearOptions: Array.from({length:12},(_,i)=>s.year-2+i).map(y=>({value:y,label:String(y)})),
+      yearPickerOpen: s.yearPickerOpen,
+      toggleYearPicker: ()=>this.toggleYearPicker(),
+      yearOptions: Array.from({length:201},(_,i)=>2000+i).map(y=>({
+        value: y, label: String(y),
+        bg: y === s.year ? "#f6f3ea" : "#fff",
+        onSelect: ()=>this.selectYear(y),
+      })),
       onMonthChange: (ev)=>this.loadPeriod(s.year, parseInt(ev.target.value)),
-      onYearChange: (ev)=>this.loadPeriod(parseInt(ev.target.value), s.month),
 
       saveStatus: s.saveStatus,
       menuOpen: s.menuOpen,
