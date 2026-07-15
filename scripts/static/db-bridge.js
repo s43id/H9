@@ -137,7 +137,11 @@
       }
       var content = JSON.stringify({ version: 1, records: records }, null, 2);
       var filename = backupFilename();
-      var written = await Filesystem.writeFile({ path: filename, data: content, directory: "CACHE" });
+      // encoding: "utf8" matters here — without it Filesystem.writeFile
+      // treats `data` as base64, and this is a plain JSON string. Likely
+      // why Backup Database silently failed on Android (writeRecord()
+      // above already specified this correctly; this call didn't).
+      var written = await Filesystem.writeFile({ path: filename, data: content, directory: "CACHE", encoding: "utf8" });
       await Share.share({ title: filename, url: written.uri });
       return { ok: true, count: records.length };
     }

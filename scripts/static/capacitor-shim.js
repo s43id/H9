@@ -71,9 +71,20 @@
     return originalClick.call(this);
   };
 
-  // Android WebView's window.print() is a silent no-op — tell the user
-  // rather than have "Export PDF" appear to do nothing.
+  // Android WebView's window.print() is a silent no-op. android/app/src/
+  // main/java/.../PrintPlugin.java exposes the WebView's own
+  // createPrintDocumentAdapter() (this is how printing already works in
+  // Chrome for Android) as Capacitor.Plugins.Print — same system print
+  // dialog desktop/Electron get via window.print(), "Save as PDF" included.
+  var PrintPlugin = window.Capacitor.Plugins.Print;
   window.print = function () {
-    alert("PDF export isn't available on Android yet — use Export Excel or Export JSON instead.");
+    if (!PrintPlugin) {
+      alert("PDF export isn't available on this device — use Export Excel or Export JSON instead.");
+      return;
+    }
+    PrintPlugin.print().catch(function (err) {
+      console.error("[capacitor-shim] print failed:", err);
+      alert("Couldn't open the print dialog: " + (err && err.message ? err.message : err));
+    });
   };
 })();
