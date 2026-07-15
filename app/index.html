@@ -1261,11 +1261,6 @@ class Component extends DCLogic {
         ["Main Opportunity", s.qual.opportunity || ""],
       ],
     });
-    sections.push({
-      type: "note",
-      banner: "Thesis Invalidates If / Mistake Log",
-      text: s.qual.mistakeLog || "",
-    });
     return sections;
   }
 
@@ -1285,7 +1280,7 @@ class Component extends DCLogic {
       let y = 36;
 
       const ensureSpace = (needed) => {
-        if (y + needed > pageHeight - 28) { doc.addPage(); y = 36; }
+        if (y + needed > pageHeight - 28) { doc.addPage("a4", "portrait"); y = 36; }
       };
       const banner = (label) => {
         ensureSpace(24);
@@ -1354,14 +1349,6 @@ class Component extends DCLogic {
             });
             y = doc.lastAutoTable.finalY + 8;
           });
-        } else if (sec.type === "note") {
-          ensureSpace(40);
-          doc.autoTable({
-            startY: y, margin: { left: marginX, right: marginX },
-            body: [[sec.text]], theme: "grid",
-            styles: { fontSize: 9, cellPadding: 6, lineColor: LINE },
-          });
-          y = doc.lastAutoTable.finalY + 12;
         }
       });
 
@@ -1481,12 +1468,6 @@ class Component extends DCLogic {
           grp.rows.forEach((row, idx) => dataRow(journal, row, idx % 2 === 1, { bold1: true, centerFrom: 2 }));
         });
         journal.addRow([]);
-      } else if (sec.type === "note") {
-        banner(journal, sec.banner, 7);
-        const noteRow = journal.addRow([sec.text]);
-        journal.mergeCells(noteRow.number, 1, noteRow.number, 7);
-        noteRow.alignment = { wrapText: true, vertical: "top" };
-        for (let c = 1; c <= 7; c++) noteRow.getCell(c).border = cellBorder;
       }
     });
 
