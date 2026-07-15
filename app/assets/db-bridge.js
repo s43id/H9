@@ -42,7 +42,21 @@
     });
   }
 
-  if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+  // Guard on the actual plugin objects, not just isNativePlatform(): if this
+  // script runs before Capacitor finishes registering plugins,
+  // window.Capacitor exists but .Plugins.Filesystem/.Share could still be
+  // undefined, and accessing them unguarded would throw here at load time —
+  // leaving window.journalDB undefined and every save/load/backup/restore
+  // broken for the rest of the session. Falling through to the
+  // localStorage-backed branch below is a safe degradation instead.
+  if (
+    window.Capacitor &&
+    window.Capacitor.isNativePlatform &&
+    window.Capacitor.isNativePlatform() &&
+    window.Capacitor.Plugins &&
+    window.Capacitor.Plugins.Filesystem &&
+    window.Capacitor.Plugins.Share
+  ) {
     var Filesystem = window.Capacitor.Plugins.Filesystem;
     var Share = window.Capacitor.Plugins.Share;
     var DIR = "journal-db";

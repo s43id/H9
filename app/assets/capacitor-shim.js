@@ -13,7 +13,19 @@
 // so this whole file is a no-op and behavior is exactly as before.
 (function () {
   "use strict";
-  if (!window.Capacitor || !window.Capacitor.isNativePlatform || !window.Capacitor.isNativePlatform()) {
+  // Also guards on the plugin objects themselves, not just
+  // isNativePlatform(): if this script runs before Capacitor finishes
+  // registering plugins, window.Capacitor.Plugins.Filesystem/.Share could
+  // still be undefined, and accessing them unguarded would throw here at
+  // load time — see the matching comment in db-bridge.js.
+  if (
+    !window.Capacitor ||
+    !window.Capacitor.isNativePlatform ||
+    !window.Capacitor.isNativePlatform() ||
+    !window.Capacitor.Plugins ||
+    !window.Capacitor.Plugins.Filesystem ||
+    !window.Capacitor.Plugins.Share
+  ) {
     return;
   }
 
