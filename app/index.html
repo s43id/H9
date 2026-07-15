@@ -1224,9 +1224,13 @@ class Component extends DCLogic {
     const s = this.state;
 
     // Same trick as before (an HTML table served as .xls — Excel opens it
-    // directly, no binary XLSX writer needed), just styled to match the
-    // app's own navy/cream/gold palette and section layout instead of a
-    // plain bordered table.
+    // directly, no binary XLSX writer needed), styled to match the app's
+    // own navy/cream/gold palette. Two separate <table> elements (not one
+    // continuous table): the main 7-column sections and the 32-column
+    // (Indicator + 31 days) Daily Tracker can't share a column grid —
+    // Excel's HTML-to-XLS converter computes column widths once per table,
+    // so mixing 7-cell and 32-cell rows in the same table made it guess
+    // badly and produce huge, misaligned columns across the whole sheet.
     const NAVY = "#10233a", GOLD = "#c8963e", HEAD_BG = "#eee3c8",
       COL_BG = "#f3ead8", ROW_ALT = "#f6f3ea", BORDER = "#e4e0d2";
     const esc = (v) => String(v == null ? "" : v)
@@ -1234,64 +1238,65 @@ class Component extends DCLogic {
 
     const bannerRow = (label, span) =>
       `<tr><td colspan="${span}" style="background:${NAVY};color:#ffffff;font-weight:bold;font-size:13px;padding:8px 10px;">${esc(label)}</td></tr>`;
-    const colHeadRow = (cols) =>
-      `<tr>${cols.map(c => `<th style="background:${COL_BG};color:${NAVY};font-weight:bold;font-size:11px;text-align:left;padding:5px 8px;border:1px solid ${BORDER};">${esc(c)}</th>`).join("")}</tr>`;
+    const colHeadRow = (cols, size) =>
+      `<tr>${cols.map(c => `<th style="background:${COL_BG};color:${NAVY};font-weight:bold;font-size:${size||11}px;text-align:${size?"center":"left"};padding:5px 8px;border:1px solid ${BORDER};">${esc(c)}</th>`).join("")}</tr>`;
     const td = (v, bg, extra) =>
       `<td style="background:${bg};padding:5px 8px;border:1px solid ${BORDER};${extra||""}">${esc(v)}</td>`;
+    const colgroup = (widths) =>
+      `<colgroup>${widths.map(w => `<col style="width:${w}px;">`).join("")}</colgroup>`;
 
-    let rows = "";
-    rows += `<tr><td colspan="7" style="background:${HEAD_BG};padding:14px 10px 4px;">`
+    let main = colgroup([200, 160, 85, 85, 85, 85, 190]);
+    main += `<tr><td colspan="7" style="background:${HEAD_BG};padding:14px 10px 4px;">`
       + `<div style="font-size:10px;letter-spacing:2px;color:${GOLD};font-weight:bold;">MACRO RESEARCH JOURNAL</div>`
       + `<div style="font-size:20px;color:${NAVY};font-weight:bold;">Macro Economy</div>`
       + `</td></tr>`;
-    rows += `<tr><td colspan="7" style="background:${HEAD_BG};padding:0 10px 14px;color:${NAVY};font-size:11px;">${esc(this.currentLabel)}</td></tr>`;
-    rows += `<tr><td colspan="7" style="height:8px;"></td></tr>`;
+    main += `<tr><td colspan="7" style="background:${HEAD_BG};padding:0 10px 14px;color:${NAVY};font-size:11px;">${esc(this.currentLabel)}</td></tr>`;
+    main += `<tr><td colspan="7" style="height:8px;"></td></tr>`;
 
     CHAPTERS.forEach((ch, i) => {
-      rows += bannerRow(String(i + 1).padStart(2, "0") + "  " + ch.title, 7);
-      rows += colHeadRow(["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4", "Notes"]);
+      main += bannerRow(String(i + 1).padStart(2, "0") + "  " + ch.title, 7);
+      main += colHeadRow(["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4", "Notes"]);
       ch.indicators.forEach(([name, freq], idx) => {
         const id = ch.key + "__" + slug(name);
         const e = s.entries[id] || {};
         const bg = idx % 2 ? ROW_ALT : "#ffffff";
-        rows += "<tr>"
+        main += "<tr>"
           + td(name, bg, "font-weight:bold;")
           + td(freq, bg, "color:#6b6b6b;font-size:11px;")
           + td(e.e1, bg) + td(e.e2, bg) + td(e.e3, bg) + td(e.e4, bg) + td(e.notes, bg)
           + "</tr>";
       });
-      rows += `<tr><td colspan="7" style="height:6px;"></td></tr>`;
+      main += `<tr><td colspan="7" style="height:6px;"></td></tr>`;
     });
 
-    // 09 — Daily Liquidity & Sentiment Tracker, one column per day (1-31),
-    // matching how it's numbered and laid out in the app itself.
-    rows += bannerRow("09  Daily Liquidity & Sentiment Tracker", 7);
+    let daily = colgroup([200].concat(Array(31).fill(32)));
+    daily += bannerRow("09  Daily Liquidity & Sentiment Tracker", 32);
     DAILY_GROUPS.forEach((grp, gi) => {
-      rows += `<tr><td colspan="7" style="background:${gi ? "#ffffff" : ROW_ALT};font-weight:bold;color:${NAVY};padding:6px 8px;">${esc(grp.title)}</td></tr>`;
+      daily += `<tr><td colspan="32" style="background:${gi ? "#ffffff" : ROW_ALT};font-weight:bold;color:${NAVY};padding:6px 8px;">${esc(grp.title)}</td></tr>`;
       const dayHeaders = ["Indicator"];
       for (let d = 1; d <= 31; d++) dayHeaders.push(String(d));
-      rows += `<tr>${dayHeaders.map(h => `<th style="background:${COL_BG};color:${NAVY};font-weight:bold;font-size:10px;text-align:center;padding:4px;border:1px solid ${BORDER};">${esc(h)}</th>`).join("")}</tr>`;
+      daily += colHeadRow(dayHeaders, 10);
       grp.indicators.forEach((name, idx) => {
         const id = grp.key + "__" + slug(name);
         const rec = s.daily[id] || {};
         const bg = idx % 2 ? ROW_ALT : "#ffffff";
         let r = "<tr>" + td(name, bg, "font-weight:bold;white-space:nowrap;");
         for (let d = 1; d <= 31; d++) r += td(rec[d], bg, "text-align:center;font-size:10px;");
-        rows += r + "</tr>";
+        daily += r + "</tr>";
       });
     });
-    rows += `<tr><td colspan="7" style="height:6px;"></td></tr>`;
 
-    rows += bannerRow("Macro Conclusion", 7);
-    rows += "<tr>" + td("Current Phase", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.phase)}</td></tr>`;
-    rows += "<tr>" + td("Main Risk", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.risk)}</td></tr>`;
-    rows += "<tr>" + td("Main Opportunity", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.opportunity)}</td></tr>`;
-    rows += `<tr><td colspan="7" style="height:6px;"></td></tr>`;
+    let tail = colgroup([200, 160, 85, 85, 85, 85, 190]);
+    tail += bannerRow("Macro Conclusion", 7);
+    tail += "<tr>" + td("Current Phase", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.phase)}</td></tr>`;
+    tail += "<tr>" + td("Main Risk", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.risk)}</td></tr>`;
+    tail += "<tr>" + td("Main Opportunity", HEAD_BG, "font-weight:bold;") + `<td colspan="6" style="padding:5px 8px;border:1px solid ${BORDER};">${esc(s.qual.opportunity)}</td></tr>`;
+    tail += `<tr><td colspan="7" style="height:6px;"></td></tr>`;
+    tail += bannerRow("Thesis Invalidates If / Mistake Log", 7);
+    tail += `<tr><td colspan="7" style="padding:8px;border:1px solid ${BORDER};">${esc(s.qual.mistakeLog)}</td></tr>`;
 
-    rows += bannerRow("Thesis Invalidates If / Mistake Log", 7);
-    rows += `<tr><td colspan="7" style="padding:8px;border:1px solid ${BORDER};">${esc(s.qual.mistakeLog)}</td></tr>`;
-
-    const html = `<html><head><meta charset="UTF-8"></head><body><table cellspacing="0" style="border-collapse:collapse;font-family:Calibri,Arial,sans-serif;">${rows}</table></body></html>`;
+    const table = (inner) => `<table cellspacing="0" style="border-collapse:collapse;table-layout:fixed;font-family:Calibri,Arial,sans-serif;">${inner}</table>`;
+    const html = `<html><head><meta charset="UTF-8"></head><body>${table(main)}${table(daily)}${table(tail)}</body></html>`;
     const blob = new Blob([html], { type: "application/vnd.ms-excel" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
