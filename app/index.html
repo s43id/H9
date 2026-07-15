@@ -1206,17 +1206,28 @@ class Component extends DCLogic {
   }
 
   exportPDF() {
-    this.setState({ menuOpen: false });
-    if (window.electronPrint) {
-      window.electronPrint.exportPDF(this.currentLabel + ".pdf").then((res) => {
-        this.flashStatus(res && res.ok ? "PDF saved" : "PDF export cancelled");
-      }).catch((err) => {
-        console.error("[exportPDF] failed:", err);
-        this.flashStatus("PDF export failed — see console");
-      });
-      return;
-    }
-    setTimeout(() => window.print(), 50);
+    // Sections are collapsed by default and there's no "Expand all" button
+    // anymore — printing/PDF-ing without expanding first only captures
+    // whatever happens to already be open on screen (chapter titles and
+    // progress counts, no actual data), which is what got reported. Force
+    // everything open first, matching what the old Expand all button did,
+    // then wait for that render before printing.
+    const openChapters = {};
+    CHAPTERS.forEach(c => openChapters[c.key] = true);
+    this.setState({ menuOpen: false, openChapters, qualOpen: true, mistakeOpen: true, dailyOpen: true }, () => {
+      setTimeout(() => {
+        if (window.electronPrint) {
+          window.electronPrint.exportPDF(this.currentLabel + ".pdf").then((res) => {
+            this.flashStatus(res && res.ok ? "PDF saved" : "PDF export cancelled");
+          }).catch((err) => {
+            console.error("[exportPDF] failed:", err);
+            this.flashStatus("PDF export failed — see console");
+          });
+          return;
+        }
+        window.print();
+      }, 80);
+    });
   }
 
   exportExcel() {
@@ -1272,6 +1283,7 @@ class Component extends DCLogic {
     let daily = colgroup([200].concat(Array(31).fill(32)));
     daily += bannerRow("09  Daily Liquidity & Sentiment Tracker", 32);
     DAILY_GROUPS.forEach((grp, gi) => {
+      if (gi) daily += `<tr><td colspan="32" style="height:10px;"></td></tr>`;
       daily += `<tr><td colspan="32" style="background:${gi ? "#ffffff" : ROW_ALT};font-weight:bold;color:${NAVY};padding:6px 8px;">${esc(grp.title)}</td></tr>`;
       const dayHeaders = ["Indicator"];
       for (let d = 1; d <= 31; d++) dayHeaders.push(String(d));
@@ -1296,7 +1308,13 @@ class Component extends DCLogic {
     tail += `<tr><td colspan="7" style="padding:8px;border:1px solid ${BORDER};">${esc(s.qual.mistakeLog)}</td></tr>`;
 
     const table = (inner) => `<table cellspacing="0" style="border-collapse:collapse;table-layout:fixed;font-family:Calibri,Arial,sans-serif;">${inner}</table>`;
-    const html = `<html><head><meta charset="UTF-8"></head><body>${table(main)}${table(daily)}${table(tail)}</body></html>`;
+    // A block-level spacer (e.g. a <div style="height:...">) between
+    // consecutive <table>s gets collapsed away by Excel's HTML-to-XLS
+    // conversion — it only reliably respects row height inside an actual
+    // <table>, which is why every table in this export is separated by one
+    // of these rather than plain HTML spacing.
+    const tableGap = table(`<tr><td style="border:none;height:16px;">&nbsp;</td></tr>`);
+    const html = `<html><head><meta charset="UTF-8"></head><body>${table(main)}${tableGap}${table(daily)}${tableGap}${table(tail)}</body></html>`;
     const blob = new Blob([html], { type: "application/vnd.ms-excel" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
