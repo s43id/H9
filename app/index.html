@@ -11,6 +11,7 @@ window.__resources = {
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/db-bridge.js"></script>
 <script src="assets/capacitor-shim.js"></script>
 <script src="assets/dc-runtime.js"></script>
 </head>
@@ -713,32 +714,26 @@ window.__resources = {
       </sc-raw-select>
     </div>
     <span style="font-size:12px;color:#2f8f5b;font-family:'JetBrains Mono',monospace;text-align:right;flex-shrink:0;white-space:nowrap;">{{ saveStatus }}</span>
-    <button sc-camel-on-click="{{ toggleExpandCollapseAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">{{ expandCollapseLabel }}</button>
-    <button sc-camel-on-click="{{ startNewEntry }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Start new entry</button>
     </div>
     <div style="position:relative;flex-shrink:0;">
-      <button sc-camel-on-click="{{ toggleExportMenu }}" style="white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Export ▾</button>
-      <sc-if value="{{ exportMenuOpen }}" hint-placeholder-val="{{ false }}">
-        <div style="position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);overflow:hidden;min-width:150px;z-index:30;">
-          <button sc-camel-on-click="{{ exportPDF }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;" style-hover="background:#f6f3ea;">Export PDF</button>
+      <button sc-camel-on-click="{{ toggleMenu }}" title="Menu" style="white-space:nowrap;padding:7px 14px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:15px;font-weight:600;cursor:pointer;line-height:1;" style-hover="background:#d3c088;">☰</button>
+      <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);overflow:hidden;min-width:180px;z-index:30;">
+          <button sc-camel-on-click="{{ newEntry }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;" style-hover="background:#f6f3ea;">New Entry</button>
+          <button sc-camel-on-click="{{ saveEntry }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Save</button>
+          <button sc-camel-on-click="{{ openDbList }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Open</button>
+          <button sc-camel-on-click="{{ exportPDF }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Export PDF</button>
           <button sc-camel-on-click="{{ exportExcel }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Export Excel</button>
-          <button sc-camel-on-click="{{ exportJSON }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Export JSON</button>
+          <button sc-camel-on-click="{{ backupDb }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Backup Database</button>
+          <button sc-camel-on-click="{{ restoreDb }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Restore Database</button>
         </div>
       </sc-if>
     </div>
-    <button sc-camel-on-click="{{ importJSONPrompt }}" style="flex-shrink:0;white-space:nowrap;padding:7px 12px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:#d3c088;">Import JSON</button>
-    <button sc-camel-on-click="{{ saveAll }}" style="flex-shrink:0;white-space:nowrap;padding:7px 14px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:12px;font-weight:800;cursor:pointer;" style-hover="background:#d9a94f;">Save &amp; Clear</button>
   </div>
   <div style="height:0;"></div>
 
   <div style="max-width:1640px;margin:0 auto;padding:{{ contentPadding }};">
 
-    <sc-if value="{{ viewingBackup }}" hint-placeholder-val="{{ false }}">
-      <div style="background:#fdf3d9;border:1px solid #e8cf8a;border-radius:10px;padding:14px 18px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
-        <span style="font-size:13px;color:#6b5417;">Viewing backup: <strong>{{ viewingLabel }}</strong> (read-only) — your current entry is safely kept aside.</span>
-        <button sc-camel-on-click="{{ returnToCurrentEntry }}" style="padding:8px 14px;border:none;background:#10233a;color:#fff;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">Return to current entry</button>
-      </div>
-    </sc-if>
 
     <sc-for list="{{ chapters }}" as="chapter" hint-placeholder-count="8">
       <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:12px;overflow:hidden;">
@@ -912,6 +907,23 @@ window.__resources = {
 </div>
 </div>
 
+<sc-if value="{{ dbOpenListOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;background:rgba(16,35,58,0.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:12px;max-width:420px;width:100%;max-height:70vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+      <div style="padding:16px 20px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;">
+        <strong style="color:#10233a;font-size:15px;">Open saved entry</strong>
+        <button sc-camel-on-click="{{ closeDbList }}" style="border:none;background:transparent;font-size:20px;cursor:pointer;color:#8a8570;line-height:1;padding:4px;">×</button>
+      </div>
+      <sc-if value="{{ dbListEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 20px;color:#8a8570;font-size:13px;">No saved entries yet — use Save from the menu to create one.</div>
+      </sc-if>
+      <sc-for list="{{ dbList }}" as="item" hint-placeholder-count="3">
+        <button sc-camel-on-click="{{ item.onOpen }}" style="display:block;width:100%;text-align:left;padding:13px 20px;border:none;background:#fff;color:#10233a;font-size:13.5px;font-family:'JetBrains Mono',monospace;cursor:pointer;border-bottom:1px solid #f2f0e6;" style-hover="background:#f6f3ea;">{{ item.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
 </x-dc>
 <script type="text/x-dc" data-dc-script="">
 const CHAPTERS = [
@@ -1053,71 +1065,54 @@ class Component extends DCLogic {
     year: new Date().getFullYear(), month: new Date().getMonth()+1,
     entries: {}, qual: {}, daily: {},
     openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false,
-    viewingBackup: false, viewingLabel: "", savedDraftState: null,
-    saveStatus: "", exportMenuOpen: false,
+    saveStatus: "", menuOpen: false, dbOpenListOpen: false, dbList: [],
     dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,
   };
 
   componentDidMount() {
-    this.loadPeriod(this.state.year, this.state.month, true);
+    this.loadPeriod(this.state.year, this.state.month);
     this.mq = window.matchMedia("(max-width: 720px)");
     const update = () => this.setState({ isMobile: this.mq.matches });
     this.mq.addEventListener("change", update);
     update();
+    if (window.nativeMenu) window.nativeMenu.onAction((action) => this.handleMenuAction(action));
   }
 
-  storageKey(year, month) { return `macro-journal-${year}-${String(month).padStart(2,"0")}`; }
+  periodKey(year, month) { return `${year}-${String(month).padStart(2,"0")}`; }
 
-  loadPeriod(year, month, skipSet) {
-    const key = this.storageKey(year, month);
-    const raw = localStorage.getItem(key);
-    const data = raw ? JSON.parse(raw) : { entries:{}, qual:{}, daily:{} };
+  periodLabel(year, month) { return `${MONTHS[month-1]} ${year}`; }
+
+  async loadPeriod(year, month) {
+    const key = this.periodKey(year, month);
+    const data = (await window.journalDB.load(key)) || { entries:{}, qual:{}, daily:{} };
     this.currentKey = key;
-    this.fileHandle = null;
-    this.setState({ year, month, entries: data.entries||{}, qual: data.qual||{}, daily: data.daily||{}, viewingBackup:false, viewingLabel:"" });
+    this.currentLabel = this.periodLabel(year, month);
+    this.setState({ year, month, entries: data.entries||{}, qual: data.qual||{}, daily: data.daily||{} });
   }
 
-  saveDraft() {
-    localStorage.setItem(this.currentKey, JSON.stringify({ entries: this.state.entries, qual: this.state.qual, daily: this.state.daily }));
+  persistCurrent() {
+    window.journalDB.save(this.currentKey, this.currentLabel, this.state.year, this.state.month, {
+      entries: this.state.entries, qual: this.state.qual, daily: this.state.daily,
+    });
   }
 
   onEntryChange(id, field, value) {
     const entries = { ...this.state.entries, [id]: { ...(this.state.entries[id]||{}), [field]: value } };
-    this.setState({ entries }, () => this.saveDraft());
+    this.setState({ entries }, () => this.persistCurrent());
   }
 
   onDailyChange(id, day, value) {
     const daily = { ...this.state.daily, [id]: { ...(this.state.daily[id]||{}), [day]: value } };
-    this.setState({ daily }, () => this.saveDraft());
+    this.setState({ daily }, () => this.persistCurrent());
   }
 
   onQualField(field, value) {
     const qual = { ...this.state.qual, [field]: value };
-    this.setState({ qual }, () => this.saveDraft());
+    this.setState({ qual }, () => this.persistCurrent());
   }
 
   toggleChapter(key) {
     this.setState({ openChapters: { ...this.state.openChapters, [key]: !this.state.openChapters[key] } });
-  }
-
-  expandAll() {
-    const o = {};
-    CHAPTERS.forEach(c => o[c.key] = true);
-    this.setState({ openChapters: o, qualOpen: true, mistakeOpen: true, dailyOpen: true });
-  }
-
-  collapseAll() {
-    this.setState({ openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false });
-  }
-
-  isAllExpanded() {
-    const s = this.state;
-    return CHAPTERS.every(c => !!s.openChapters[c.key]) && s.qualOpen && s.mistakeOpen && s.dailyOpen;
-  }
-
-  toggleExpandCollapseAll() {
-    if (this.isAllExpanded()) this.collapseAll();
-    else this.expandAll();
   }
 
   openNoteLink(id) {
@@ -1137,61 +1132,68 @@ class Component extends DCLogic {
     setTimeout(() => this.setState({ saveStatus: "" }), 4000);
   }
 
-  startNewEntry() {
-    if (!confirm("This clears everything currently on screen (without saving a file). Continue?")) return;
-    localStorage.removeItem(this.currentKey);
-    this.fileHandle = null;
+  newEntry() {
+    this.setState({ menuOpen: false });
+    if (!confirm("This clears everything currently on screen and removes the saved entry for " + this.currentLabel + ". Continue?")) return;
+    window.journalDB.remove(this.currentKey);
     this.setState({ entries:{}, qual:{}, daily:{} });
     this.flashStatus("Cleared — ready for new entry");
   }
 
-  async downloadOrWriteFile() {
-    const filename = this.currentKey + ".json";
-    const content = JSON.stringify({ entries: this.state.entries, qual: this.state.qual, daily: this.state.daily }, null, 2);
-    if (window.showSaveFilePicker) {
-      try {
-        if (!this.fileHandle || this.fileHandle.name !== filename) {
-          this.fileHandle = await window.showSaveFilePicker({ suggestedName: filename, types: [{ description: "Journal backup", accept: { "application/json": [".json"] } }] });
-        }
-        const writable = await this.fileHandle.createWritable();
-        await writable.write(content);
-        await writable.close();
-        return;
-      } catch (err) {}
+  saveEntry() {
+    this.setState({ menuOpen: false });
+    this.persistCurrent();
+    this.flashStatus("Saved " + this.currentLabel + " " + new Date().toLocaleTimeString());
+  }
+
+  toggleMenu() { this.setState({ menuOpen: !this.state.menuOpen }); }
+
+  async openDbList() {
+    const list = await window.journalDB.list();
+    this.setState({ dbList: list, dbOpenListOpen: true, menuOpen: false });
+  }
+
+  closeDbList() { this.setState({ dbOpenListOpen: false }); }
+
+  openFromDb(item) {
+    this.setState({ dbOpenListOpen: false });
+    this.loadPeriod(item.year, item.month);
+  }
+
+  async backupDb() {
+    this.setState({ menuOpen: false });
+    const res = await window.journalDB.backup();
+    this.flashStatus(res && res.ok ? "Backup saved" : "Backup cancelled");
+  }
+
+  async restoreDb() {
+    this.setState({ menuOpen: false });
+    const res = await window.journalDB.restore();
+    if (res && res.ok) {
+      this.flashStatus("Restored " + res.count + " entr" + (res.count === 1 ? "y" : "ies"));
+      this.loadPeriod(this.state.year, this.state.month);
+    } else {
+      this.flashStatus("Restore cancelled");
     }
-    const blob = new Blob([content], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
   }
 
-  async saveAll() {
-    await this.downloadOrWriteFile();
-    localStorage.removeItem(this.currentKey);
-    this.fileHandle = null;
-    this.setState({ entries:{}, qual:{}, daily:{} });
-    this.flashStatus("Saved & cleared " + new Date().toLocaleTimeString());
+  handleMenuAction(action) {
+    if (action === "new-entry") this.newEntry();
+    else if (action === "save") this.saveEntry();
+    else if (action === "open") this.openDbList();
+    else if (action === "export-pdf") this.exportPDF();
+    else if (action === "export-excel") this.exportExcel();
+    else if (action === "backup") this.backupDb();
+    else if (action === "restore") this.restoreDb();
   }
-
-  exportJSON() {
-    const content = JSON.stringify({ entries: this.state.entries, qual: this.state.qual, daily: this.state.daily }, null, 2);
-    const blob = new Blob([content], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = this.currentKey + ".json"; a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  toggleExportMenu() { this.setState({ exportMenuOpen: !this.state.exportMenuOpen }); }
 
   exportPDF() {
-    this.setState({ exportMenuOpen: false });
+    this.setState({ menuOpen: false });
     setTimeout(() => window.print(), 50);
   }
 
   exportExcel() {
-    this.setState({ exportMenuOpen: false });
+    this.setState({ menuOpen: false });
     const s = this.state;
     let rows = "";
     CHAPTERS.forEach(ch => {
@@ -1212,40 +1214,13 @@ class Component extends DCLogic {
     const blob = new Blob([html], { type: "application/vnd.ms-excel" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = this.currentKey + ".xls"; a.click();
+    a.href = url; a.download = this.currentLabel + ".xls"; a.click();
     URL.revokeObjectURL(url);
-  }
-
-  importJSONPrompt() {
-    const input = document.createElement("input");
-    input.type = "file"; input.accept = "application/json";
-    input.onchange = () => {
-      const file = input.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const imported = JSON.parse(reader.result);
-          this.savedDraftState = { entries: this.state.entries, qual: this.state.qual, daily: this.state.daily };
-          this.setState({ entries: imported.entries||{}, qual: imported.qual||{}, daily: imported.daily||{}, viewingBackup: true, viewingLabel: file.name });
-        } catch (e) {
-          alert("Couldn't read that file — make sure it's a backup exported from this journal.");
-        }
-      };
-      reader.readAsText(file);
-    };
-    input.click();
-  }
-
-  returnToCurrentEntry() {
-    const d = this.savedDraftState || { entries:{}, qual:{}, daily:{} };
-    this.savedDraftState = null;
-    this.setState({ entries: d.entries, qual: d.qual, daily: d.daily, viewingBackup:false, viewingLabel:"" });
   }
 
   renderVals() {
     const s = this.state;
-    const readOnly = s.viewingBackup;
+    const readOnly = false;
     const mob = !!s.isMobile;
 
     const chapters = CHAPTERS.map((ch, i) => {
@@ -1329,19 +1304,20 @@ class Component extends DCLogic {
       onYearChange: (ev)=>this.loadPeriod(parseInt(ev.target.value), s.month),
 
       saveStatus: s.saveStatus,
-      expandCollapseLabel: this.isAllExpanded() ? "Collapse all" : "Expand all",
-      toggleExpandCollapseAll: ()=>this.toggleExpandCollapseAll(),
-      startNewEntry: ()=>this.startNewEntry(),
-      exportJSON: ()=>this.exportJSON(),
-      importJSONPrompt: ()=>this.importJSONPrompt(),
-      saveAll: ()=>this.saveAll(),
-      exportMenuOpen: s.exportMenuOpen,
-      toggleExportMenu: ()=>this.toggleExportMenu(),
+      menuOpen: s.menuOpen,
+      toggleMenu: ()=>this.toggleMenu(),
+      newEntry: ()=>this.newEntry(),
+      saveEntry: ()=>this.saveEntry(),
+      openDbList: ()=>this.openDbList(),
       exportPDF: ()=>this.exportPDF(),
       exportExcel: ()=>this.exportExcel(),
+      backupDb: ()=>this.backupDb(),
+      restoreDb: ()=>this.restoreDb(),
 
-      viewingBackup: s.viewingBackup, viewingLabel: s.viewingLabel,
-      returnToCurrentEntry: ()=>this.returnToCurrentEntry(),
+      dbOpenListOpen: s.dbOpenListOpen,
+      closeDbList: ()=>this.closeDbList(),
+      dbList: (s.dbList||[]).map(item => ({ key: item.key, label: item.label, onOpen: ()=>this.openFromDb(item) })),
+      dbListEmpty: !(s.dbList && s.dbList.length),
 
       chapters,
 

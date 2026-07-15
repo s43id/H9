@@ -1,8 +1,44 @@
-import { app, BrowserWindow, session, shell } from "electron";
+import { app, BrowserWindow, session, shell, Menu, ipcMain } from "electron";
 import path from "path";
+import * as db from "./db";
 
 const APP_HTML = path.join(__dirname, "..", "app", "index.html");
 const ICON_PATH = path.join(__dirname, "..", "build-resources", "icon.png");
+const PRELOAD = path.join(__dirname, "preload.js");
+
+function sendMenuAction(action: string): void {
+  const win = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
+  win?.webContents.send("menu-action", action);
+}
+
+function buildMenu(): void {
+  // New Entry/Save/Open/Export/Backup/Restore all just forward to the
+  // renderer, which runs the exact same handlers the in-page ☰ menu calls
+  // (app/index.html's handleMenuAction) — one implementation per action,
+  // regardless of which UI triggered it.
+  const fileItems: Electron.MenuItemConstructorOptions[] = [
+    { label: "New Entry", accelerator: "CmdOrCtrl+N", click: () => sendMenuAction("new-entry") },
+    { label: "Save", accelerator: "CmdOrCtrl+S", click: () => sendMenuAction("save") },
+    { label: "Open", accelerator: "CmdOrCtrl+O", click: () => sendMenuAction("open") },
+    { type: "separator" },
+    { label: "Export PDF", click: () => sendMenuAction("export-pdf") },
+    { label: "Export Excel", click: () => sendMenuAction("export-excel") },
+    { type: "separator" },
+    { label: "Backup Database…", click: () => sendMenuAction("backup") },
+    { label: "Restore Database…", click: () => sendMenuAction("restore") },
+  ];
+
+  const template: Electron.MenuItemConstructorOptions[] = [];
+  if (process.platform === "darwin") {
+    template.push({ role: "appMenu" });
+    template.push({ label: "File", submenu: fileItems });
+  } else {
+    template.push({ label: "File", submenu: [...fileItems, { type: "separator" }, { label: "Exit", role: "quit" }] });
+  }
+  template.push({ role: "editMenu" }, { role: "viewMenu" }, { role: "windowMenu" });
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
 
 function createWindow(): void {
   const win = new BrowserWindow({
@@ -16,6 +52,7 @@ function createWindow(): void {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      preload: PRELOAD,
     },
   });
 
@@ -27,6 +64,23 @@ function createWindow(): void {
   });
 
   win.loadFile(APP_HTML);
+}
+
+function registerDbHandlers(): void {
+  ipcMain.handle("db:list", () => db.list());
+  ipcMain.handle("db:load", (_e, key: string) => db.load(key));
+  ipcMain.handle("db:save", (_e, args: { key: string; label: string; year: number; month: number; data: unknown }) =>
+    db.save(args.key, args.label, args.year, args.month, args.data)
+  );
+  ipcMain.handle("db:remove", (_e, key: string) => db.remove(key));
+  ipcMain.handle("db:backup", (e) => {
+    const win = BrowserWindow.fromWebContents(e.sender) || BrowserWindow.getAllWindows()[0];
+    return db.backup(win);
+  });
+  ipcMain.handle("db:restore", (e) => {
+    const win = BrowserWindow.fromWebContents(e.sender) || BrowserWindow.getAllWindows()[0];
+    return db.restore(win);
+  });
 }
 
 app.whenReady().then(() => {
@@ -52,6 +106,8 @@ app.whenReady().then(() => {
     });
   });
 
+  registerDbHandlers();
+  buildMenu();
   createWindow();
 
   app.on("activate", () => {
