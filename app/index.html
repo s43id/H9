@@ -715,10 +715,10 @@ window.__resources = {
     </div>
     <span style="font-size:12px;color:#2f8f5b;font-family:'JetBrains Mono',monospace;text-align:right;flex-shrink:0;white-space:nowrap;">{{ saveStatus }}</span>
     </div>
-    <div style="position:relative;flex-shrink:0;">
+    <div style="position:relative;flex-shrink:0;margin-left:auto;">
       <button sc-camel-on-click="{{ toggleMenu }}" title="Menu" style="white-space:nowrap;padding:7px 14px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:15px;font-weight:600;cursor:pointer;line-height:1;" style-hover="background:#d3c088;">☰</button>
       <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
-        <div style="position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);overflow:hidden;min-width:180px;z-index:30;">
+        <div style="position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);overflow:hidden;min-width:180px;max-height:70vh;overflow-y:auto;z-index:1000;">
           <button sc-camel-on-click="{{ newEntry }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;" style-hover="background:#f6f3ea;">New Entry</button>
           <button sc-camel-on-click="{{ saveEntry }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Save</button>
           <button sc-camel-on-click="{{ openDbList }}" style="display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:#fff;color:#10233a;font-size:13px;cursor:pointer;border-top:1px solid #eee;" style-hover="background:#f6f3ea;">Open</button>
@@ -814,15 +814,15 @@ window.__resources = {
         <div style="padding:18px 22px 22px;display:grid;gap:16px;">
           <div>
             <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Current Phase</label>
-            <textarea value="{{ qualPhase }}" sc-camel-on-change="{{ onQualPhaseChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:56px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
+            <textarea value="{{ qualPhase }}" sc-camel-on-change="{{ onQualPhaseChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
           </div>
           <div>
             <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Main Risk</label>
-            <textarea value="{{ qualRisk }}" sc-camel-on-change="{{ onQualRiskChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:56px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
+            <textarea value="{{ qualRisk }}" sc-camel-on-change="{{ onQualRiskChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
           </div>
           <div>
             <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Main Opportunity</label>
-            <textarea value="{{ qualOpportunity }}" sc-camel-on-change="{{ onQualOpportunityChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:56px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
+            <textarea value="{{ qualOpportunity }}" sc-camel-on-change="{{ onQualOpportunityChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
           </div>
         </div>
       </sc-if>
@@ -841,8 +841,11 @@ window.__resources = {
     </div>
 
     <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:16px;overflow:hidden;">
-      <div sc-camel-on-click="{{ onToggleDaily }}" style="padding:17px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;">
-        <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:#10233a;font-weight:700;">Daily Liquidity &amp; Sentiment Tracker</h2>
+      <div sc-camel-on-click="{{ onToggleDaily }}" style="padding:17px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:baseline;gap:14px;flex:1;min-width:0;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c8963e;font-weight:700;flex-shrink:0;">09</span>
+          <h2 style="margin:0;flex:1;min-width:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:#10233a;font-weight:700;">Daily Liquidity &amp; Sentiment Tracker</h2>
+        </div>
         <span style="font-size:14px;color:#8a8570;">{{ dailyArrowGlyph }}</span>
       </div>
       <sc-if value="{{ dailyOpen }}" hint-placeholder-val="{{ false }}">
