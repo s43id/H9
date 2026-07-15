@@ -1441,9 +1441,12 @@ class Component extends DCLogic {
 
     this.buildReportSections().forEach((sec) => {
       if (sec.type === "table" && sec.cols) {
-        banner(journal, sec.banner, 7);
-        colHead(journal, sec.cols);
-        sec.rows.forEach((row, idx) => dataRow(journal, row, idx % 2 === 1, { bold1: true }));
+        // Notes dropped from the Excel export per request — cols/rows end
+        // in Notes (see buildReportSections), so slicing the last column
+        // off leaves Indicator/Frequency/Entry 1-4.
+        banner(journal, sec.banner, 6);
+        colHead(journal, sec.cols.slice(0, -1));
+        sec.rows.forEach((row, idx) => dataRow(journal, row.slice(0, -1), idx % 2 === 1, { bold1: true }));
         journal.addRow([]);
       } else if (sec.type === "table" && sec.rows2col) {
         banner(journal, sec.banner, 7);
