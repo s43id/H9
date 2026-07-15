@@ -1230,11 +1230,11 @@ class Component extends DCLogic {
       sections.push({
         type: "table",
         banner: String(i + 1).padStart(2, "0") + "  " + ch.title,
-        cols: ["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4", "Notes"],
+        cols: ["Indicator", "Frequency", "Entry 1", "Entry 2", "Entry 3", "Entry 4"],
         rows: ch.indicators.map(([name, freq]) => {
           const id = ch.key + "__" + slug(name);
           const e = s.entries[id] || {};
-          return [name, freq, e.e1 || "", e.e2 || "", e.e3 || "", e.e4 || "", e.notes || ""];
+          return [name, freq, e.e1 || "", e.e2 || "", e.e3 || "", e.e4 || ""];
         }),
       });
     });
@@ -1294,7 +1294,7 @@ class Component extends DCLogic {
       };
 
       doc.setFillColor(...HEAD_BG);
-      doc.rect(0, 0, pageWidth, 64, "F");
+      doc.rect(0, 0, pageWidth, 68, "F");
       doc.setTextColor(...GOLD);
       doc.setFont(undefined, "bold");
       doc.setFontSize(8);
@@ -1302,10 +1302,9 @@ class Component extends DCLogic {
       doc.setTextColor(...NAVY);
       doc.setFontSize(18);
       doc.text("Macro Economy", marginX, 42);
-      doc.setFont(undefined, "normal");
-      doc.setFontSize(10);
-      doc.text(this.currentLabel, marginX, 56);
-      y = 80;
+      doc.setFontSize(13);
+      doc.text(this.currentLabel, marginX, 60);
+      y = 84;
 
       this.buildReportSections().forEach((sec) => {
         banner(sec.banner);
@@ -1417,45 +1416,42 @@ class Component extends DCLogic {
     };
 
     // One sheet, 32 columns wide (Indicator + 31 days is the widest
-    // section) — the first 7 columns double up for both the main
-    // 7-column sections and days 1-6 of the Daily Tracker, the rest
-    // (days 7-31) get a narrow width of their own.
+    // section) — the first 6 columns double up for both the main
+    // 6-column sections and days 1-5 of the Daily Tracker, the rest
+    // (days 6-31) get a narrow width of their own.
     const journal = wb.addWorksheet("Journal");
     journal.columns = [
-      { width: 28 }, { width: 16 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 30 },
-    ].concat(Array(25).fill({ width: 6 }));
+      { width: 28 }, { width: 16 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 },
+    ].concat(Array(26).fill({ width: 6 }));
 
     const titleRow = journal.addRow(["MACRO RESEARCH JOURNAL"]);
-    journal.mergeCells(titleRow.number, 1, titleRow.number, 7);
+    journal.mergeCells(titleRow.number, 1, titleRow.number, 6);
     titleRow.getCell(1).fill = fill(HEAD_BG);
     titleRow.getCell(1).font = { bold: true, size: 10, color: { argb: GOLD } };
     const nameRow = journal.addRow(["Macro Economy"]);
-    journal.mergeCells(nameRow.number, 1, nameRow.number, 7);
+    journal.mergeCells(nameRow.number, 1, nameRow.number, 6);
     nameRow.getCell(1).fill = fill(HEAD_BG);
     nameRow.getCell(1).font = { bold: true, size: 20, color: { argb: NAVY } };
     const labelRow = journal.addRow([this.currentLabel]);
-    journal.mergeCells(labelRow.number, 1, labelRow.number, 7);
+    journal.mergeCells(labelRow.number, 1, labelRow.number, 6);
     labelRow.getCell(1).fill = fill(HEAD_BG);
-    labelRow.getCell(1).font = { size: 11, color: { argb: NAVY } };
+    labelRow.getCell(1).font = { bold: true, size: 14, color: { argb: NAVY } };
     journal.addRow([]);
 
     this.buildReportSections().forEach((sec) => {
       if (sec.type === "table" && sec.cols) {
-        // Notes dropped from the Excel export per request — cols/rows end
-        // in Notes (see buildReportSections), so slicing the last column
-        // off leaves Indicator/Frequency/Entry 1-4.
         banner(journal, sec.banner, 6);
-        colHead(journal, sec.cols.slice(0, -1));
-        sec.rows.forEach((row, idx) => dataRow(journal, row.slice(0, -1), idx % 2 === 1, { bold1: true }));
+        colHead(journal, sec.cols);
+        sec.rows.forEach((row, idx) => dataRow(journal, row, idx % 2 === 1, { bold1: true }));
         journal.addRow([]);
       } else if (sec.type === "table" && sec.rows2col) {
-        banner(journal, sec.banner, 7);
+        banner(journal, sec.banner, 6);
         sec.rows2col.forEach(([label, val]) => {
           const row = journal.addRow([label, val]);
-          journal.mergeCells(row.number, 2, row.number, 7);
+          journal.mergeCells(row.number, 2, row.number, 6);
           row.getCell(1).fill = fill(HEAD_BG);
           row.getCell(1).font = { bold: true };
-          for (let c = 1; c <= 7; c++) row.getCell(c).border = cellBorder;
+          for (let c = 1; c <= 6; c++) row.getCell(c).border = cellBorder;
         });
         journal.addRow([]);
       } else if (sec.type === "daily") {
