@@ -806,41 +806,6 @@ window.__resources = {
     </sc-for>
 
     <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:16px;overflow:hidden;">
-      <div sc-camel-on-click="{{ onToggleQual }}" style="padding:17px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;">
-        <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:#10233a;font-weight:700;">Macro Conclusion</h2>
-        <span style="font-size:14px;color:#8a8570;">{{ qualArrowGlyph }}</span>
-      </div>
-      <sc-if value="{{ qualOpen }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:18px 22px 22px;display:grid;gap:16px;">
-          <div>
-            <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Current Phase</label>
-            <textarea value="{{ qualPhase }}" sc-camel-on-change="{{ onQualPhaseChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
-          </div>
-          <div>
-            <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Main Risk</label>
-            <textarea value="{{ qualRisk }}" sc-camel-on-change="{{ onQualRiskChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
-          </div>
-          <div>
-            <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Main Opportunity</label>
-            <textarea value="{{ qualOpportunity }}" sc-camel-on-change="{{ onQualOpportunityChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
-          </div>
-        </div>
-      </sc-if>
-    </div>
-
-    <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:16px;overflow:hidden;">
-      <div sc-camel-on-click="{{ onToggleMistake }}" style="padding:17px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;">
-        <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:#10233a;font-weight:700;">Thesis Invalidates If / Mistake Log</h2>
-        <span style="font-size:14px;color:#8a8570;">{{ mistakeArrowGlyph }}</span>
-      </div>
-      <sc-if value="{{ mistakeOpen }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:18px 22px 22px;">
-          <textarea value="{{ mistakeLog }}" sc-camel-on-change="{{ onMistakeChange }}" sc-camel-read-only="{{ readOnlyBackup }}" placeholder="What would prove this thesis wrong? What mistakes did you catch this month?" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
-        </div>
-      </sc-if>
-    </div>
-
-    <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:16px;overflow:hidden;">
       <div sc-camel-on-click="{{ onToggleDaily }}" style="padding:17px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;flex-wrap:wrap;gap:8px;">
         <div style="display:flex;align-items:baseline;gap:14px;flex:1;min-width:0;">
           <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c8963e;font-weight:700;flex-shrink:0;">09</span>
@@ -902,6 +867,41 @@ window.__resources = {
             </div>
           </sc-for>
           </sc-if>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:16px;overflow:hidden;">
+      <div sc-camel-on-click="{{ onToggleQual }}" style="padding:17px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;">
+        <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:#10233a;font-weight:700;">Macro Conclusion</h2>
+        <span style="font-size:14px;color:#8a8570;">{{ qualArrowGlyph }}</span>
+      </div>
+      <sc-if value="{{ qualOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:18px 22px 22px;display:grid;gap:16px;">
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Current Phase</label>
+            <textarea value="{{ qualPhase }}" sc-camel-on-change="{{ onQualPhaseChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
+          </div>
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Main Risk</label>
+            <textarea value="{{ qualRisk }}" sc-camel-on-change="{{ onQualRiskChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
+          </div>
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:700;color:#10233a;margin-bottom:6px;">Main Opportunity</label>
+            <textarea value="{{ qualOpportunity }}" sc-camel-on-change="{{ onQualOpportunityChange }}" sc-camel-read-only="{{ readOnlyBackup }}" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="background:#ffffff;border:1px solid #e4e0d2;border-radius:12px;margin-bottom:16px;overflow:hidden;">
+      <div sc-camel-on-click="{{ onToggleMistake }}" style="padding:17px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#fbfaf4;">
+        <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:#10233a;font-weight:700;">Thesis Invalidates If / Mistake Log</h2>
+        <span style="font-size:14px;color:#8a8570;">{{ mistakeArrowGlyph }}</span>
+      </div>
+      <sc-if value="{{ mistakeOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:18px 22px 22px;">
+          <textarea value="{{ mistakeLog }}" sc-camel-on-change="{{ onMistakeChange }}" sc-camel-read-only="{{ readOnlyBackup }}" placeholder="What would prove this thesis wrong? What mistakes did you catch this month?" style="width:100%;box-sizing:border-box;min-height:150px;padding:10px 12px;border:1px solid #e4e0d2;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;background:#fdfdfb;"></textarea>
         </div>
       </sc-if>
     </div>
@@ -1137,8 +1137,7 @@ class Component extends DCLogic {
 
   newEntry() {
     this.setState({ menuOpen: false });
-    if (!confirm("This clears everything currently on screen and removes the saved entry for " + this.currentLabel + ". Continue?")) return;
-    window.journalDB.remove(this.currentKey);
+    if (!confirm("This clears everything currently on screen. Your saved copy of " + this.currentLabel + " won't be touched unless you type something new or hit Save. Continue?")) return;
     this.setState({ entries:{}, qual:{}, daily:{} });
     this.flashStatus("Cleared — ready for new entry");
   }
@@ -1165,13 +1164,25 @@ class Component extends DCLogic {
 
   async backupDb() {
     this.setState({ menuOpen: false });
-    const res = await window.journalDB.backup();
-    this.flashStatus(res && res.ok ? "Backup saved" : "Backup cancelled");
+    try {
+      const res = await window.journalDB.backup();
+      this.flashStatus(res && res.ok ? "Backup saved" : "Backup cancelled");
+    } catch (err) {
+      console.error("[backupDb] failed:", err);
+      this.flashStatus("Backup failed — " + (err && err.message ? err.message : "see console"));
+    }
   }
 
   async restoreDb() {
     this.setState({ menuOpen: false });
-    const res = await window.journalDB.restore();
+    let res;
+    try {
+      res = await window.journalDB.restore();
+    } catch (err) {
+      console.error("[restoreDb] failed:", err);
+      this.flashStatus("Restore failed — " + (err && err.message ? err.message : "see console"));
+      return;
+    }
     if (res && res.ok) {
       this.flashStatus("Restored " + res.count + " entr" + (res.count === 1 ? "y" : "ies"));
       this.loadPeriod(this.state.year, this.state.month);
