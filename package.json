@@ -30,7 +30,7 @@
   },
   "build": {
     "appId": "com.hassanemami.macrojournal",
-    "productName": "Macro Journal",
+    "productName": "Macro Handbook",
     "directories": {
       "output": "release",
       "buildResources": "build-resources"

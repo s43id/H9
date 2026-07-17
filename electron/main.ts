@@ -65,6 +65,10 @@ function createWindow(): void {
     minHeight: 600,
     backgroundColor: "#10233a",
     icon: ICON_PATH,
+    // Set explicitly (in addition to app/index.html's own <title>) so the
+    // window/taskbar title reads correctly from the very first frame,
+    // rather than waiting on the page to finish loading and set it itself.
+    title: "Macro Handbook",
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,

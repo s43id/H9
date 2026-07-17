@@ -36,7 +36,7 @@ public class PrintPlugin extends Plugin {
                     call.reject("Print service unavailable on this device");
                     return;
                 }
-                String jobName = "Macro Journal";
+                String jobName = "Macro Handbook";
                 PrintDocumentAdapter adapter = getBridge().getWebView().createPrintDocumentAdapter(jobName);
                 printManager.print(jobName, adapter, new PrintAttributes.Builder().build());
                 call.resolve();

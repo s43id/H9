@@ -94,6 +94,15 @@ function main() {
     `$1\n<meta http-equiv="Content-Security-Policy" content="${csp}">\n`
   );
 
+  // The source file has no <title> at all, so the window/taskbar/browser-tab
+  // title fell back to whatever each platform defaults to. electron/main.ts
+  // also sets this explicitly on the BrowserWindow itself for the very
+  // first frame, before the page has loaded.
+  template = template.replace(
+    '<meta charset="utf-8">',
+    '<meta charset="utf-8">\n<title>Macro Handbook</title>'
+  );
+
   // Android WebView has no File System Access API and no working
   // window.print(); this shim is a no-op everywhere else (guarded on
   // window.Capacitor.isNativePlatform()) so desktop/Electron/browser
