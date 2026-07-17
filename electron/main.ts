@@ -29,6 +29,22 @@ function buildMenu(): void {
     { label: "Restore Database…", click: () => sendMenuAction("restore") },
   ];
 
+  // Custom View menu instead of the role:"viewMenu" default — that default
+  // bundles in Actual Size/Zoom In/Zoom Out, which were reported as
+  // unwanted (no in-app zoom feature relies on them). No Window menu
+  // either — role:"windowMenu" (Minimize/Zoom/Bring All to Front) isn't
+  // useful for this single-window app.
+  const viewMenu: Electron.MenuItemConstructorOptions = {
+    label: "View",
+    submenu: [
+      { role: "reload" },
+      { role: "forceReload" },
+      { role: "toggleDevTools" },
+      { type: "separator" },
+      { role: "togglefullscreen" },
+    ],
+  };
+
   const template: Electron.MenuItemConstructorOptions[] = [];
   if (process.platform === "darwin") {
     template.push({ role: "appMenu" });
@@ -36,7 +52,7 @@ function buildMenu(): void {
   } else {
     template.push({ label: "File", submenu: [...fileItems, { type: "separator" }, { label: "Exit", role: "quit" }] });
   }
-  template.push({ role: "editMenu" }, { role: "viewMenu" }, { role: "windowMenu" });
+  template.push({ role: "editMenu" }, viewMenu);
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }

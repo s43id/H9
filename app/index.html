@@ -695,46 +695,23 @@ window.__resources = {
 
 <div>
 
-  <div style="background:#eee3c8;color:#10233a;padding:{{ headerPadding }};display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid #d9c79a;">
+  <div style="background:#eee3c8;color:#000000;padding:{{ headerPadding }};display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid #d9c79a;">
     <div>
-      <div style="font-size:11.5px;color:#8a7f5c;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">{{ todayLabel }}</div>
-      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c8963e;font-weight:700;margin-bottom:8px;">Macro Research Journal</div>
-      <h1 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:{{ headerTitleSize }};font-weight:600;letter-spacing:-0.3px;">Macro Economy</h1>
-      <div style="font-size:12.5px;color:#8a7f5c;margin-top:6px;font-family:'JetBrains Mono',monospace;">{{ periodLabel }} &nbsp;·&nbsp; {{ overallProgressLabel }}</div>
+      <div style="font-size:11.5px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-bottom:10px;">{{ todayLabel }}</div>
+      <h1 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:{{ headerTitleSize }};font-weight:700;letter-spacing:-0.3px;">Macro Economy</h1>
     </div>
     <div style="display:flex;align-items:center;gap:12px;">
       <img src="assets/avatar.jpg" style="width:{{ avatarSize }};height:{{ avatarSize }};border-radius:50%;object-fit:cover;border:2px solid #c8963e;flex-shrink:0;">
       <div style="line-height:1.4;white-space:nowrap;flex-shrink:0;">
         <div style="font-size:{{ headerNameSize }};font-weight:700;white-space:nowrap;">Hassan Emami</div>
-        <div style="font-size:11.5px;color:#8a7f5c;font-family:'JetBrains Mono',monospace;white-space:nowrap;">@H_MACROTRADER</div>
+        <div style="font-size:11.5px;font-weight:700;font-family:'JetBrains Mono',monospace;white-space:nowrap;">@H_MACROTRADER</div>
       </div>
     </div>
   </div>
 
-  <div class="no-print" style="position:sticky;top:0;z-index:20;background:#e2d2a0;color:#10233a;padding:{{ toolbarPadding }};display:flex;align-items:center;gap:6px;flex-wrap:{{ toolbarOuterWrap }};box-shadow:0 4px 16px rgba(0,0,0,0.18);">
-    <div style="display:flex;align-items:center;gap:6px;overflow-x:{{ toolbarInnerOverflow }};flex-wrap:{{ toolbarInnerWrap }};flex:{{ toolbarInnerFlex }};min-width:0;">
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-      <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Month</label>
-      <sc-raw-select value="{{ month }}" sc-camel-on-change="{{ onMonthChange }}" style="padding:6px 8px;border-radius:6px;border:none;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        <sc-for list="{{ monthOptions }}" as="m" hint-placeholder-count="12">
-          <option value="{{ m.value }}">{{ m.label }}</option>
-        </sc-for>
-      </sc-raw-select>
-    </div>
-    <span style="font-size:12px;color:#2f8f5b;font-family:'JetBrains Mono',monospace;text-align:right;flex-shrink:0;white-space:nowrap;">{{ saveStatus }}</span>
-    </div>
-    <div style="position:relative;display:flex;align-items:center;gap:6px;flex-shrink:0;">
-      <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Year</label>
-      <button sc-camel-on-click="{{ toggleYearPicker }}" style="padding:6px 8px;border-radius:6px;border:none;font-size:13px;font-family:'JetBrains Mono',monospace;background:#fff;color:#10233a;cursor:pointer;min-width:64px;text-align:left;">{{ year }} ▾</button>
-      <sc-if value="{{ yearPickerOpen }}" hint-placeholder-val="{{ false }}">
-        <div style="position:absolute;top:100%;left:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);max-height:240px;overflow-y:auto;min-width:90px;z-index:1000;">
-          <sc-for list="{{ yearOptions }}" as="y" hint-placeholder-count="10">
-            <button id="year-opt-{{ y.value }}" sc-camel-on-click="{{ y.onSelect }}" style="display:block;width:100%;text-align:left;padding:8px 14px;border:none;background:{{ y.bg }};color:#10233a;font-size:13px;font-family:'JetBrains Mono',monospace;cursor:pointer;" style-hover="background:#f6f3ea;">{{ y.label }}</button>
-          </sc-for>
-        </div>
-      </sc-if>
-    </div>
-    <div style="position:relative;flex-shrink:0;margin-left:auto;">
+  <div class="no-print" style="position:sticky;top:0;z-index:20;background:#e2d2a0;color:#10233a;padding:{{ toolbarPadding }};display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:{{ toolbarOuterWrap }};box-shadow:0 4px 16px rgba(0,0,0,0.18);">
+    <span style="font-size:12px;color:#2f8f5b;font-family:'JetBrains Mono',monospace;white-space:nowrap;">{{ saveStatus }}</span>
+    <div style="position:relative;flex-shrink:0;">
       <button sc-camel-on-click="{{ toggleMenu }}" title="Menu" style="white-space:nowrap;padding:7px 14px;border:1px solid #b9a76f;background:transparent;color:#10233a;border-radius:6px;font-size:15px;font-weight:600;cursor:pointer;line-height:1;" style-hover="background:#d3c088;">☰</button>
       <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
         <div style="position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);overflow:hidden;min-width:180px;max-height:70vh;overflow-y:auto;z-index:1000;">
@@ -925,6 +902,28 @@ window.__resources = {
       </sc-if>
     </div>
 
+    <div class="no-print" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:20px 0 4px;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Month</label>
+        <sc-raw-select value="{{ month }}" sc-camel-on-change="{{ onMonthChange }}" style="padding:6px 8px;border-radius:6px;border:1px solid #e4e0d2;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          <sc-for list="{{ monthOptions }}" as="m" hint-placeholder-count="12">
+            <option value="{{ m.value }}">{{ m.label }}</option>
+          </sc-for>
+        </sc-raw-select>
+      </div>
+      <div style="position:relative;display:flex;align-items:center;gap:6px;">
+        <label style="font-size:11px;color:#7d7047;text-transform:uppercase;letter-spacing:0.5px;">Year</label>
+        <button sc-camel-on-click="{{ toggleYearPicker }}" style="padding:6px 8px;border-radius:6px;border:1px solid #e4e0d2;font-size:13px;font-family:'JetBrains Mono',monospace;background:#fff;color:#10233a;cursor:pointer;min-width:64px;text-align:left;">{{ year }} ▾</button>
+        <sc-if value="{{ yearPickerOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;bottom:100%;left:0;margin-bottom:4px;background:#fff;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,0.25);max-height:240px;overflow-y:auto;min-width:90px;z-index:1000;">
+            <sc-for list="{{ yearOptions }}" as="y" hint-placeholder-count="10">
+              <button id="year-opt-{{ y.value }}" sc-camel-on-click="{{ y.onSelect }}" style="display:block;width:100%;text-align:left;padding:8px 14px;border:none;background:{{ y.bg }};color:#10233a;font-size:13px;font-family:'JetBrains Mono',monospace;cursor:pointer;" style-hover="background:#f6f3ea;">{{ y.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
   </div>
 </div>
 </div>
@@ -942,6 +941,38 @@ window.__resources = {
       <sc-for list="{{ dbList }}" as="item" hint-placeholder-count="3">
         <button sc-camel-on-click="{{ item.onOpen }}" style="display:block;width:100%;text-align:left;padding:13px 20px;border:none;background:#fff;color:#10233a;font-size:13.5px;font-family:'JetBrains Mono',monospace;cursor:pointer;border-bottom:1px solid #f2f0e6;" style-hover="background:#f6f3ea;">{{ item.label }}</button>
       </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ linkModalOpen }}" hint-placeholder-val="{{ false }}">
+  <div class="no-print" style="position:fixed;inset:0;background:rgba(16,35,58,0.55);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:12px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+      <div style="padding:16px 20px;border-bottom:1px solid #eee;">
+        <strong style="color:#10233a;font-size:15px;">Paste or edit the link</strong>
+      </div>
+      <div style="padding:20px;">
+        <input type="text" value="{{ linkModalValue }}" sc-camel-on-change="{{ onLinkModalChange }}" placeholder="https://..." style="width:100%;box-sizing:border-box;padding:11px 10px;border:1px solid #e4e0d2;border-radius:7px;font-size:14px;font-family:'JetBrains Mono',monospace;background:#fff;">
+      </div>
+      <div style="padding:12px 20px 20px;display:flex;justify-content:flex-end;gap:8px;">
+        <button sc-camel-on-click="{{ cancelLinkModal }}" style="padding:9px 16px;border:1px solid #e4e0d2;background:#fff;color:#10233a;border-radius:6px;font-size:13px;cursor:pointer;" style-hover="background:#f6f3ea;">Cancel</button>
+        <button sc-camel-on-click="{{ saveLinkModal }}" style="padding:9px 16px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;" style-hover="background:#d9a94f;">Save</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ newEntryConfirmOpen }}" hint-placeholder-val="{{ false }}">
+  <div class="no-print" style="position:fixed;inset:0;background:rgba(16,35,58,0.55);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:12px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+      <div style="padding:20px 20px 0;">
+        <strong style="color:#10233a;font-size:15px;">Start a new entry?</strong>
+        <p style="color:#5a5544;font-size:13.5px;line-height:1.5;margin:10px 0 0;">This clears everything currently on screen. Your saved copy of {{ currentLabel }} won't be touched unless you type something new or hit Save.</p>
+      </div>
+      <div style="padding:16px 20px 20px;display:flex;justify-content:flex-end;gap:8px;">
+        <button sc-camel-on-click="{{ cancelNewEntry }}" style="padding:9px 16px;border:1px solid #e4e0d2;background:#fff;color:#10233a;border-radius:6px;font-size:13px;cursor:pointer;" style-hover="background:#f6f3ea;">Cancel</button>
+        <button sc-camel-on-click="{{ confirmNewEntry }}" style="padding:9px 16px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;" style-hover="background:#d9a94f;">Continue</button>
+      </div>
     </div>
   </div>
 </sc-if>
@@ -1089,6 +1120,8 @@ class Component extends DCLogic {
     openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false,
     saveStatus: "", menuOpen: false, dbOpenListOpen: false, dbList: [],
     yearPickerOpen: false,
+    linkModalOpen: false, linkModalId: null, linkModalValue: "",
+    newEntryConfirmOpen: false,
     dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,
   };
 
@@ -1145,10 +1178,23 @@ class Component extends DCLogic {
   }
 
   editNoteLink(id) {
+    // window.prompt() isn't implemented in Electron (intentionally, per
+    // Electron's own docs) — silently returns null there, which read as
+    // "Add link/Edit link doesn't work on Windows". Same in-app modal
+    // pattern as the Open list below instead of a native dialog, so it
+    // behaves identically on every platform.
     const link = (this.state.entries[id] && this.state.entries[id].notes) || "";
-    const val = prompt("Paste or edit the link:", link);
-    if (val !== null) this.onEntryChange(id, "notes", val.trim());
+    this.setState({ linkModalOpen: true, linkModalId: id, linkModalValue: link });
   }
+
+  onLinkModalChange(value) { this.setState({ linkModalValue: value }); }
+
+  saveLinkModal() {
+    this.onEntryChange(this.state.linkModalId, "notes", this.state.linkModalValue.trim());
+    this.setState({ linkModalOpen: false });
+  }
+
+  cancelLinkModal() { this.setState({ linkModalOpen: false }); }
 
   flashStatus(msg) {
     this.setState({ saveStatus: msg });
@@ -1156,11 +1202,18 @@ class Component extends DCLogic {
   }
 
   newEntry() {
-    this.setState({ menuOpen: false });
-    if (!confirm("This clears everything currently on screen. Your saved copy of " + this.currentLabel + " won't be touched unless you type something new or hit Save. Continue?")) return;
-    this.setState({ entries:{}, qual:{}, daily:{} });
+    // window.confirm() blocking a sandboxed Electron renderer was reported
+    // as a full hang (nothing typeable until the app is restarted) — same
+    // in-app modal fix as editNoteLink, no native dialog involved.
+    this.setState({ menuOpen: false, newEntryConfirmOpen: true });
+  }
+
+  confirmNewEntry() {
+    this.setState({ entries:{}, qual:{}, daily:{}, newEntryConfirmOpen: false });
     this.flashStatus("Cleared — ready for new entry");
   }
+
+  cancelNewEntry() { this.setState({ newEntryConfirmOpen: false }); }
 
   saveEntry() {
     this.setState({ menuOpen: false });
@@ -1539,9 +1592,6 @@ class Component extends DCLogic {
       };
     });
 
-    const totalIndicators = chapters.reduce((a,c)=>a+c.indicators.length,0);
-    const totalFilled = chapters.reduce((a,c)=>a+c.indicators.filter(ind=>ind.e1||ind.e2||ind.e3||ind.e4||ind.notes).length,0);
-
     const dailyGroups = DAILY_GROUPS.map(grp => ({
       title: grp.title,
       indicators: grp.indicators.map(name => {
@@ -1570,6 +1620,7 @@ class Component extends DCLogic {
     }));
 
     return {
+      currentLabel: this.currentLabel,
       headerPadding: mob ? "20px 16px" : "30px 44px",
       headerTitleSize: mob ? "24px" : "34px",
       headerNameSize: mob ? "14px" : "17px",
@@ -1579,12 +1630,7 @@ class Component extends DCLogic {
       chapterHeadPadding: mob ? "13px 14px" : "17px 24px",
       isMobile: mob, isDesktop: !mob,
       toolbarOuterWrap: mob ? "wrap" : "nowrap",
-      toolbarInnerWrap: mob ? "wrap" : "nowrap",
-      toolbarInnerOverflow: mob ? "visible" : "auto",
-      toolbarInnerFlex: mob ? "1 1 100%" : "1",
       todayLabel: new Date().toLocaleDateString(undefined, { year:"numeric", month:"long", day:"numeric" }),
-      periodLabel: `${MONTHS[s.month-1]} ${s.year}`,
-      overallProgressLabel: `${totalFilled}/${totalIndicators} indicators logged`,
       month: s.month, year: s.year,
       monthOptions: MONTHS.map((m,i)=>({value:i+1,label:m})),
       yearPickerOpen: s.yearPickerOpen,
@@ -1611,6 +1657,16 @@ class Component extends DCLogic {
       closeDbList: ()=>this.closeDbList(),
       dbList: (s.dbList||[]).map(item => ({ key: item.key, label: item.label, onOpen: ()=>this.openFromDb(item) })),
       dbListEmpty: !(s.dbList && s.dbList.length),
+
+      linkModalOpen: s.linkModalOpen,
+      linkModalValue: s.linkModalValue,
+      onLinkModalChange: (ev)=>this.onLinkModalChange(ev.target.value),
+      saveLinkModal: ()=>this.saveLinkModal(),
+      cancelLinkModal: ()=>this.cancelLinkModal(),
+
+      newEntryConfirmOpen: s.newEntryConfirmOpen,
+      confirmNewEntry: ()=>this.confirmNewEntry(),
+      cancelNewEntry: ()=>this.cancelNewEntry(),
 
       chapters,
 
