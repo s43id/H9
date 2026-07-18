@@ -69,11 +69,13 @@ export async function remove(key: string): Promise<void> {
   }
 }
 
-function backupFilename(): string {
-  return `macro-journal-backup-${new Date().toISOString().slice(0, 10)}.json`;
+function backupFilename(name: string): string {
+  const trimmed = name.trim();
+  const base = trimmed || `macro-journal-backup-${new Date().toISOString().slice(0, 10)}`;
+  return base.toLowerCase().endsWith(".json") ? base : `${base}.json`;
 }
 
-export async function backup(win: BrowserWindow): Promise<{ ok: boolean; count?: number }> {
+export async function backup(win: BrowserWindow, name: string): Promise<{ ok: boolean; count?: number }> {
   const items = await list();
   const records: Record_[] = [];
   for (const item of items) {
@@ -81,7 +83,7 @@ export async function backup(win: BrowserWindow): Promise<{ ok: boolean; count?:
     if (record) records.push(record);
   }
   const result = await dialog.showSaveDialog(win, {
-    defaultPath: backupFilename(),
+    defaultPath: backupFilename(name),
     filters: [{ name: "Journal backup", extensions: ["json"] }],
   });
   if (result.canceled || !result.filePath) return { ok: false };

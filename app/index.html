@@ -940,7 +940,19 @@ window.__resources = {
         <div style="padding:24px 20px;color:#8a8570;font-size:13px;">No saved entries yet — use Save from the menu to create one.</div>
       </sc-if>
       <sc-for list="{{ dbList }}" as="item" hint-placeholder-count="3">
-        <button sc-camel-on-click="{{ item.onOpen }}" style="display:block;width:100%;text-align:left;padding:13px 20px;border:none;background:#fff;color:#10233a;font-size:13.5px;font-family:'JetBrains Mono',monospace;cursor:pointer;border-bottom:1px solid #f2f0e6;" style-hover="background:#f6f3ea;">{{ item.label }}</button>
+        <sc-if value="{{ item.confirmingDelete }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:1px solid #f2f0e6;background:#fdf3f0;">
+            <span style="flex:1;font-size:12.5px;color:#8a3b2a;">Delete {{ item.label }}?</span>
+            <button sc-camel-on-click="{{ item.onCancelDelete }}" style="padding:6px 10px;border:1px solid #e4e0d2;background:#fff;color:#10233a;border-radius:6px;font-size:12px;cursor:pointer;" style-hover="background:#f6f3ea;">Cancel</button>
+            <button sc-camel-on-click="{{ item.onConfirmDelete }}" style="padding:6px 10px;border:none;background:#c0392b;color:#fff;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;" style-hover="background:#a8321f;">Delete</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ item.confirmingDeleteNot }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:stretch;border-bottom:1px solid #f2f0e6;">
+            <button sc-camel-on-click="{{ item.onOpen }}" style="flex:1;display:block;text-align:left;padding:13px 20px;border:none;background:#fff;color:#10233a;font-size:13.5px;font-family:'JetBrains Mono',monospace;cursor:pointer;" style-hover="background:#f6f3ea;">{{ item.label }}</button>
+            <button sc-camel-on-click="{{ item.onAskDelete }}" title="Delete this entry" style="border:none;background:#fff;color:#8a8570;cursor:pointer;font-size:15px;padding:0 16px;" style-hover="background:#f6f3ea;color:#c0392b;">🗑</button>
+          </div>
+        </sc-if>
       </sc-for>
     </div>
   </div>
@@ -973,6 +985,23 @@ window.__resources = {
       <div style="padding:16px 20px 20px;display:flex;justify-content:flex-end;gap:8px;">
         <button sc-camel-on-click="{{ cancelNewEntry }}" style="padding:9px 16px;border:1px solid #e4e0d2;background:#fff;color:#10233a;border-radius:6px;font-size:13px;cursor:pointer;" style-hover="background:#f6f3ea;">Cancel</button>
         <button sc-camel-on-click="{{ confirmNewEntry }}" style="padding:9px 16px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;" style-hover="background:#d9a94f;">Continue</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ backupNameModalOpen }}" hint-placeholder-val="{{ false }}">
+  <div class="no-print" style="position:fixed;inset:0;background:rgba(16,35,58,0.55);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:12px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+      <div style="padding:16px 20px;border-bottom:1px solid #eee;">
+        <strong style="color:#10233a;font-size:15px;">Name this backup</strong>
+      </div>
+      <div style="padding:20px;">
+        <input type="text" value="{{ backupNameValue }}" sc-camel-on-change="{{ onBackupNameChange }}" placeholder="Backup name" style="width:100%;box-sizing:border-box;padding:11px 10px;border:1px solid #e4e0d2;border-radius:7px;font-size:14px;font-family:'JetBrains Mono',monospace;background:#fff;">
+      </div>
+      <div style="padding:12px 20px 20px;display:flex;justify-content:flex-end;gap:8px;">
+        <button sc-camel-on-click="{{ cancelBackupModal }}" style="padding:9px 16px;border:1px solid #e4e0d2;background:#fff;color:#10233a;border-radius:6px;font-size:13px;cursor:pointer;" style-hover="background:#f6f3ea;">Cancel</button>
+        <button sc-camel-on-click="{{ confirmBackup }}" style="padding:9px 16px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;" style-hover="background:#d9a94f;">Save Backup</button>
       </div>
     </div>
   </div>
@@ -1119,10 +1148,11 @@ class Component extends DCLogic {
     year: new Date().getFullYear(), month: new Date().getMonth()+1,
     entries: {}, qual: {}, daily: {},
     openChapters: {}, qualOpen: false, mistakeOpen: false, dailyOpen: false,
-    saveStatus: "", menuOpen: false, dbOpenListOpen: false, dbList: [],
+    saveStatus: "", menuOpen: false, dbOpenListOpen: false, dbList: [], dbDeleteConfirmKey: null,
     yearPickerOpen: false,
     linkModalOpen: false, linkModalId: null, linkModalValue: "",
     newEntryConfirmOpen: false,
+    backupNameModalOpen: false, backupNameValue: "",
     dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,
   };
 
@@ -1246,20 +1276,50 @@ class Component extends DCLogic {
 
   async openDbList() {
     const list = await window.journalDB.list();
-    this.setState({ dbList: list, dbOpenListOpen: true, menuOpen: false });
+    this.setState({ dbList: list, dbOpenListOpen: true, menuOpen: false, dbDeleteConfirmKey: null });
   }
 
-  closeDbList() { this.setState({ dbOpenListOpen: false }); }
+  closeDbList() { this.setState({ dbOpenListOpen: false, dbDeleteConfirmKey: null }); }
 
   openFromDb(item) {
     this.setState({ dbOpenListOpen: false });
     this.loadPeriod(item.year, item.month);
   }
 
-  async backupDb() {
-    this.setState({ menuOpen: false });
+  askDeleteDbEntry(key) { this.setState({ dbDeleteConfirmKey: key }); }
+
+  cancelDeleteDbEntry() { this.setState({ dbDeleteConfirmKey: null }); }
+
+  async confirmDeleteDbEntry(key) {
+    await window.journalDB.remove(key);
+    const list = await window.journalDB.list();
+    this.setState({ dbList: list, dbDeleteConfirmKey: null });
+    this.flashStatus("Deleted");
+  }
+
+  backupDb() {
+    // Ask for a name before handing off to window.journalDB.backup() —
+    // previously every backup used a fixed date-stamped filename with no
+    // way to name it (Electron's native Save dialog technically allowed
+    // retyping the filename there, but Android/browser had no such
+    // opportunity at all). Pre-filled with the old default so this is a
+    // no-op if the user just wants that.
+    this.setState({ menuOpen: false, backupNameModalOpen: true, backupNameValue: this.defaultBackupName() });
+  }
+
+  defaultBackupName() {
+    return "macro-journal-backup-" + new Date().toISOString().slice(0, 10);
+  }
+
+  onBackupNameChange(value) { this.setState({ backupNameValue: value }); }
+
+  cancelBackupModal() { this.setState({ backupNameModalOpen: false }); }
+
+  async confirmBackup() {
+    const name = this.state.backupNameValue;
+    this.setState({ backupNameModalOpen: false });
     try {
-      const res = await window.journalDB.backup();
+      const res = await window.journalDB.backup(name);
       this.flashStatus(res && res.ok ? "Backup saved" : "Backup cancelled");
     } catch (err) {
       console.error("[backupDb] failed:", err);
@@ -1656,7 +1716,15 @@ class Component extends DCLogic {
 
       dbOpenListOpen: s.dbOpenListOpen,
       closeDbList: ()=>this.closeDbList(),
-      dbList: (s.dbList||[]).map(item => ({ key: item.key, label: item.label, onOpen: ()=>this.openFromDb(item) })),
+      dbList: (s.dbList||[]).map(item => ({
+        key: item.key, label: item.label,
+        onOpen: ()=>this.openFromDb(item),
+        confirmingDelete: s.dbDeleteConfirmKey === item.key,
+        confirmingDeleteNot: s.dbDeleteConfirmKey !== item.key,
+        onAskDelete: ()=>this.askDeleteDbEntry(item.key),
+        onCancelDelete: ()=>this.cancelDeleteDbEntry(),
+        onConfirmDelete: ()=>this.confirmDeleteDbEntry(item.key),
+      })),
       dbListEmpty: !(s.dbList && s.dbList.length),
 
       linkModalOpen: s.linkModalOpen,
@@ -1668,6 +1736,12 @@ class Component extends DCLogic {
       newEntryConfirmOpen: s.newEntryConfirmOpen,
       confirmNewEntry: ()=>this.confirmNewEntry(),
       cancelNewEntry: ()=>this.cancelNewEntry(),
+
+      backupNameModalOpen: s.backupNameModalOpen,
+      backupNameValue: s.backupNameValue,
+      onBackupNameChange: (ev)=>this.onBackupNameChange(ev.target.value),
+      confirmBackup: ()=>this.confirmBackup(),
+      cancelBackupModal: ()=>this.cancelBackupModal(),
 
       chapters,
 

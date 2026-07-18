@@ -49,10 +49,14 @@ function buildMenu(): void {
   if (process.platform === "darwin") {
     template.push({ role: "appMenu" });
     template.push({ label: "File", submenu: fileItems });
+    // Kept on macOS only: role:"editMenu" is what wires up Cmd+C/V/X/A
+    // for text fields there, unlike Windows/Linux where those already
+    // work without a visible Edit menu — removed per request there.
+    template.push({ role: "editMenu" });
   } else {
     template.push({ label: "File", submenu: [...fileItems, { type: "separator" }, { label: "Exit", role: "quit" }] });
   }
-  template.push({ role: "editMenu" }, viewMenu);
+  template.push(viewMenu);
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
@@ -94,9 +98,9 @@ function registerDbHandlers(): void {
     db.save(args.key, args.label, args.year, args.month, args.data)
   );
   ipcMain.handle("db:remove", (_e, key: string) => db.remove(key));
-  ipcMain.handle("db:backup", (e) => {
+  ipcMain.handle("db:backup", (e, name: string) => {
     const win = BrowserWindow.fromWebContents(e.sender) || BrowserWindow.getAllWindows()[0];
-    return db.backup(win);
+    return db.backup(win, name);
   });
   ipcMain.handle("db:restore", (e) => {
     const win = BrowserWindow.fromWebContents(e.sender) || BrowserWindow.getAllWindows()[0];
