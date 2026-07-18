@@ -15,8 +15,10 @@
   "use strict";
   if (window.journalDB) return;
 
-  function backupFilename() {
-    return "macro-journal-backup-" + new Date().toISOString().slice(0, 10) + ".json";
+  function backupFilename(name) {
+    var trimmed = (name || "").trim();
+    var base = trimmed || ("macro-journal-backup-" + new Date().toISOString().slice(0, 10));
+    return /\.json$/i.test(base) ? base : base + ".json";
   }
 
   function promptForFile(onText) {
@@ -128,7 +130,7 @@
       }
     }
 
-    async function backup() {
+    async function backup(name) {
       var items = await list();
       var records = [];
       for (var i = 0; i < items.length; i++) {
@@ -136,7 +138,7 @@
         if (record) records.push(record);
       }
       var content = JSON.stringify({ version: 1, records: records }, null, 2);
-      var filename = backupFilename();
+      var filename = backupFilename(name);
       // encoding: "utf8" matters here — without it Filesystem.writeFile
       // treats `data` as base64, and this is a plain JSON string. Likely
       // why Backup Database silently failed on Android (writeRecord()
@@ -203,7 +205,7 @@
     writeIndex(readIndex().filter(function (k) { return k !== key; }));
   }
 
-  async function backupLS() {
+  async function backupLS(name) {
     var items = await listLS();
     var records = items.map(function (it) { return readRecordLS(it.key); }).filter(Boolean);
     var content = JSON.stringify({ version: 1, records: records }, null, 2);
@@ -211,7 +213,7 @@
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
     a.href = url;
-    a.download = backupFilename();
+    a.download = backupFilename(name);
     a.click();
     URL.revokeObjectURL(url);
     return { ok: true, count: records.length };
