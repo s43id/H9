@@ -1007,6 +1007,23 @@ window.__resources = {
   </div>
 </sc-if>
 
+<sc-if value="{{ saveNameModalOpen }}" hint-placeholder-val="{{ false }}">
+  <div class="no-print" style="position:fixed;inset:0;background:rgba(16,35,58,0.55);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:12px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+      <div style="padding:16px 20px;border-bottom:1px solid #eee;">
+        <strong style="color:#10233a;font-size:15px;">Name this save</strong>
+      </div>
+      <div style="padding:20px;">
+        <input type="text" value="{{ saveNameValue }}" sc-camel-on-change="{{ onSaveNameChange }}" placeholder="Entry name" style="width:100%;box-sizing:border-box;padding:11px 10px;border:1px solid #e4e0d2;border-radius:7px;font-size:14px;font-family:'JetBrains Mono',monospace;background:#fff;">
+      </div>
+      <div style="padding:12px 20px 20px;display:flex;justify-content:flex-end;gap:8px;">
+        <button sc-camel-on-click="{{ cancelSaveModal }}" style="padding:9px 16px;border:1px solid #e4e0d2;background:#fff;color:#10233a;border-radius:6px;font-size:13px;cursor:pointer;" style-hover="background:#f6f3ea;">Cancel</button>
+        <button sc-camel-on-click="{{ confirmSave }}" style="padding:9px 16px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;" style-hover="background:#d9a94f;">Save</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
 </x-dc>
 <script type="text/x-dc" data-dc-script="">
 const CHAPTERS = [
@@ -1153,6 +1170,7 @@ class Component extends DCLogic {
     linkModalOpen: false, linkModalId: null, linkModalValue: "",
     newEntryConfirmOpen: false,
     backupNameModalOpen: false, backupNameValue: "",
+    saveNameModalOpen: false, saveNameValue: "",
     dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,
   };
 
@@ -1247,9 +1265,22 @@ class Component extends DCLogic {
   cancelNewEntry() { this.setState({ newEntryConfirmOpen: false }); }
 
   saveEntry() {
-    this.setState({ menuOpen: false });
+    // Pre-filled with the current label (the auto period label the first
+    // time, or whatever custom name was last saved for this period) so
+    // hitting Save without editing the field behaves exactly like before.
+    this.setState({ menuOpen: false, saveNameModalOpen: true, saveNameValue: this.currentLabel });
+  }
+
+  onSaveNameChange(value) { this.setState({ saveNameValue: value }); }
+
+  cancelSaveModal() { this.setState({ saveNameModalOpen: false }); }
+
+  confirmSave() {
+    const name = this.state.saveNameValue.trim() || this.currentLabel;
+    this.currentLabel = name;
+    this.setState({ saveNameModalOpen: false });
     this.persistCurrent();
-    this.flashStatus("Saved " + this.currentLabel + " " + new Date().toLocaleTimeString());
+    this.flashStatus("Saved " + name + " " + new Date().toLocaleTimeString());
   }
 
   toggleMenu() { this.setState({ menuOpen: !this.state.menuOpen }); }
@@ -1742,6 +1773,12 @@ class Component extends DCLogic {
       onBackupNameChange: (ev)=>this.onBackupNameChange(ev.target.value),
       confirmBackup: ()=>this.confirmBackup(),
       cancelBackupModal: ()=>this.cancelBackupModal(),
+
+      saveNameModalOpen: s.saveNameModalOpen,
+      saveNameValue: s.saveNameValue,
+      onSaveNameChange: (ev)=>this.onSaveNameChange(ev.target.value),
+      confirmSave: ()=>this.confirmSave(),
+      cancelSaveModal: ()=>this.cancelSaveModal(),
 
       chapters,
 
