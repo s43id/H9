@@ -91,19 +91,58 @@ export async function backup(win: BrowserWindow, name: string): Promise<{ ok: bo
   return { ok: true, count: records.length };
 }
 
+function isPlausibleRecord(r: unknown): r is Record_ {
+  return (
+    !!r &&
+    typeof r === "object" &&
+    typeof (r as Record_).year === "number" &&
+    typeof (r as Record_).month === "number" &&
+    (r as Record_).month >= 1 &&
+    (r as Record_).month <= 12
+  );
+}
+
 export async function restore(win: BrowserWindow): Promise<{ ok: boolean; count?: number }> {
   const result = await dialog.showOpenDialog(win, {
     properties: ["openFile"],
     filters: [{ name: "Journal backup", extensions: ["json"] }],
   });
   if (result.canceled || result.filePaths.length === 0) return { ok: false };
+
+  let parsed: { records?: unknown };
   try {
     const raw = await fs.readFile(result.filePaths[0], "utf8");
-    const parsed = JSON.parse(raw) as { records?: Record_[] };
-    const records = parsed.records || [];
-    for (const record of records) await writeRecord(record);
-    return { ok: true, count: records.length };
+    parsed = JSON.parse(raw);
   } catch {
     return { ok: false };
   }
+  if (!Array.isArray(parsed.records)) return { ok: false };
+
+  // Regenerate `key` from year/month rather than trusting whatever the
+  // backup file says — guarantees every restored record is internally
+  // consistent (loadPeriod() always looks records up by a freshly
+  // computed key, never by the stored `key` field, so a mismatch here
+  // would otherwise make a record show up in the Open list but silently
+  // fail to load). Also tolerate a partially-corrupt backup: skip
+  // individual bad/unwritable records instead of aborting the whole
+  // restore and losing every record that WOULD have imported fine.
+  let count = 0;
+  for (const record of parsed.records) {
+    if (!isPlausibleRecord(record)) continue;
+    const key = `${record.year}-${String(record.month).padStart(2, "0")}`;
+    try {
+      await writeRecord({
+        key,
+        label: record.label || key,
+        year: record.year,
+        month: record.month,
+        savedAt: record.savedAt || new Date().toISOString(),
+        data: record.data,
+      });
+      count++;
+    } catch {
+      // this one record failed to write — keep going with the rest
+    }
+  }
+  return { ok: true, count };
 }

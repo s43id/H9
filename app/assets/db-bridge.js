@@ -25,23 +25,40 @@
     return new Promise(function (resolve) {
       var input = document.createElement("input");
       input.type = "file";
-      input.accept = "application/json";
+      // Both a MIME type and a bare extension: some Android storage
+      // providers (cloud drives, other apps' share targets) report a
+      // generic MIME like application/octet-stream for a .json file,
+      // which a MIME-only accept can filter out of the system picker
+      // entirely — the file becomes unselectable, and restore looks
+      // "broken" for backups that came from anywhere but this app's own
+      // Share sheet.
+      input.accept = "application/json,.json";
       input.onchange = function () {
         var file = input.files[0];
         if (!file) { resolve({ ok: false }); return; }
         var reader = new FileReader();
         reader.onload = function () {
-          try {
-            resolve(onText(String(reader.result)));
-          } catch (e) {
-            resolve({ ok: false });
-          }
+          // onText is async — a synchronous try/catch around calling it
+          // does NOT catch a rejected promise (the throw happens inside
+          // the async function, deferred into its returned promise, not
+          // as a synchronous exception here). Chaining through .then's
+          // rejection handler catches both cases.
+          Promise.resolve()
+            .then(function () { return onText(String(reader.result)); })
+            .then(resolve, function () { resolve({ ok: false }); });
         };
         reader.onerror = function () { resolve({ ok: false }); };
         reader.readAsText(file);
       };
       input.click();
     });
+  }
+
+  function isPlausibleRecord(r) {
+    return !!r && typeof r === "object" &&
+      typeof r.year === "number" &&
+      typeof r.month === "number" &&
+      r.month >= 1 && r.month <= 12;
   }
 
   // Guard on the actual plugin objects, not just isNativePlatform(): if this
@@ -151,9 +168,31 @@
     async function restore() {
       return promptForFile(async function (text) {
         var parsed = JSON.parse(text);
-        var records = parsed.records || [];
-        for (var i = 0; i < records.length; i++) await writeRecord(records[i]);
-        return { ok: true, count: records.length };
+        if (!parsed || !Array.isArray(parsed.records)) return { ok: false };
+        // Regenerate `key` from year/month rather than trusting the
+        // backup file's stored key, and skip individual bad/unwritable
+        // records instead of aborting the whole restore — see the
+        // matching comment in electron/db.ts's restore().
+        var count = 0;
+        for (var i = 0; i < parsed.records.length; i++) {
+          var record = parsed.records[i];
+          if (!isPlausibleRecord(record)) continue;
+          var key = record.year + "-" + String(record.month).padStart(2, "0");
+          try {
+            await writeRecord({
+              key: key,
+              label: record.label || key,
+              year: record.year,
+              month: record.month,
+              savedAt: record.savedAt || new Date().toISOString(),
+              data: record.data,
+            });
+            count++;
+          } catch (e) {
+            // this one record failed to write — keep going with the rest
+          }
+        }
+        return { ok: true, count: count };
       });
     }
 
@@ -222,9 +261,27 @@
   async function restoreLS() {
     return promptForFile(function (text) {
       var parsed = JSON.parse(text);
-      var records = parsed.records || [];
-      records.forEach(writeRecordLS);
-      return { ok: true, count: records.length };
+      if (!parsed || !Array.isArray(parsed.records)) return { ok: false };
+      var count = 0;
+      for (var i = 0; i < parsed.records.length; i++) {
+        var record = parsed.records[i];
+        if (!isPlausibleRecord(record)) continue;
+        var key = record.year + "-" + String(record.month).padStart(2, "0");
+        try {
+          writeRecordLS({
+            key: key,
+            label: record.label || key,
+            year: record.year,
+            month: record.month,
+            savedAt: record.savedAt || new Date().toISOString(),
+            data: record.data,
+          });
+          count++;
+        } catch (e) {
+          // this one record failed to write — keep going with the rest
+        }
+      }
+      return { ok: true, count: count };
     });
   }
 
