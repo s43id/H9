@@ -1,6 +1,5 @@
-import { app, BrowserWindow, session, shell, Menu, ipcMain, dialog } from "electron";
+import { app, BrowserWindow, session, shell, Menu, ipcMain } from "electron";
 import path from "path";
-import fs from "fs/promises";
 import * as db from "./db";
 
 const APP_HTML = path.join(__dirname, "..", "app", "index.html");
@@ -108,32 +107,6 @@ function registerDbHandlers(): void {
   });
 }
 
-function registerPrintHandler(): void {
-  // Bypasses the OS print dialog entirely — see the comment in preload.ts
-  // for why (no print preview support in Electron on Windows, printer
-  // selection defaulting to something that isn't a PDF destination).
-  ipcMain.handle("export-pdf", async (e, filename: string) => {
-    const win = BrowserWindow.fromWebContents(e.sender) || BrowserWindow.getAllWindows()[0];
-    const result = await dialog.showSaveDialog(win, {
-      defaultPath: filename,
-      filters: [{ name: "PDF", extensions: ["pdf"] }],
-    });
-    if (result.canceled || !result.filePath) return { ok: false };
-    // landscape:false is already the documented default — set explicitly
-    // per a report of the PDF coming out landscape (root cause was more
-    // likely wide tables (min-width:900px/1500px) getting clipped rather
-    // than true orientation, now handled by @media print in app/index.html,
-    // but pinning this removes any doubt).
-    const pdfBuffer = await win.webContents.printToPDF({
-      printBackground: true,
-      landscape: false,
-      pageSize: "A4",
-    });
-    await fs.writeFile(result.filePath, pdfBuffer);
-    return { ok: true };
-  });
-}
-
 app.whenReady().then(() => {
   // Everything the app needs (React, ReactDOM, dc-runtime, fonts, the JSON
   // it saves/loads) is local, so a strict CSP with no external origins costs
@@ -158,7 +131,6 @@ app.whenReady().then(() => {
   });
 
   registerDbHandlers();
-  registerPrintHandler();
   buildMenu();
   createWindow();
 

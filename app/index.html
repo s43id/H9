@@ -1174,6 +1174,14 @@ class Component extends DCLogic {
     dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,
   };
 
+  // Set synchronously (not just inside loadPeriod, which componentDidMount
+  // only *starts* — window.journalDB.load() is async on every platform) so
+  // Save/Export/New Entry always have a real key+label to work with, even
+  // if triggered in the brief window before the initial load resolves.
+  // loadPeriod() overwrites both as soon as it does resolve.
+  currentKey = this.periodKey(this.state.year, this.state.month);
+  currentLabel = this.periodLabel(this.state.year, this.state.month);
+
   componentDidMount() {
     this.loadPeriod(this.state.year, this.state.month);
     this.mq = window.matchMedia("(max-width: 720px)");

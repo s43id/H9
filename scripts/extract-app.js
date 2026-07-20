@@ -510,6 +510,17 @@ function main() {
     "        <button sc-camel-on-click=\"{{ confirmBackup }}\" style=\"padding:9px 16px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;\" style-hover=\"background:#d9a94f;\">Save Backup</button>\n      </div>\n    </div>\n  </div>\n</sc-if>\n\n<sc-if value=\"{{ saveNameModalOpen }}\" hint-placeholder-val=\"{{ false }}\">\n  <div class=\"no-print\" style=\"position:fixed;inset:0;background:rgba(16,35,58,0.55);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;\">\n    <div style=\"background:#fff;border-radius:12px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.35);\">\n      <div style=\"padding:16px 20px;border-bottom:1px solid #eee;\">\n        <strong style=\"color:#10233a;font-size:15px;\">Name this save</strong>\n      </div>\n      <div style=\"padding:20px;\">\n        <input type=\"text\" value=\"{{ saveNameValue }}\" sc-camel-on-change=\"{{ onSaveNameChange }}\" placeholder=\"Entry name\" style=\"width:100%;box-sizing:border-box;padding:11px 10px;border:1px solid #e4e0d2;border-radius:7px;font-size:14px;font-family:'JetBrains Mono',monospace;background:#fff;\">\n      </div>\n      <div style=\"padding:12px 20px 20px;display:flex;justify-content:flex-end;gap:8px;\">\n        <button sc-camel-on-click=\"{{ cancelSaveModal }}\" style=\"padding:9px 16px;border:1px solid #e4e0d2;background:#fff;color:#10233a;border-radius:6px;font-size:13px;cursor:pointer;\" style-hover=\"background:#f6f3ea;\">Cancel</button>\n        <button sc-camel-on-click=\"{{ confirmSave }}\" style=\"padding:9px 16px;border:none;background:#c8963e;color:#10233a;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;\" style-hover=\"background:#d9a94f;\">Save</button>\n      </div>\n    </div>\n  </div>\n</sc-if>"
   );
 
+  // currentKey/currentLabel were previously only assigned inside the async
+  // loadPeriod(), so Save/Export/New-Entry-confirm/persistCurrent() could
+  // read them as undefined if triggered before that promise resolved (a
+  // narrow but real race, worse on slower Electron IPC or devices).
+  // Synchronous class-field defaults close that window; loadPeriod() still
+  // overwrites both as soon as it resolves.
+  template = template.replace(
+    "    dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,\n  };\n\n  componentDidMount() {",
+    "    dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,\n  };\n\n  // Set synchronously (not just inside loadPeriod, which componentDidMount\n  // only *starts* — window.journalDB.load() is async on every platform) so\n  // Save/Export/New Entry always have a real key+label to work with, even\n  // if triggered in the brief window before the initial load resolves.\n  // loadPeriod() overwrites both as soon as it does resolve.\n  currentKey = this.periodKey(this.state.year, this.state.month);\n  currentLabel = this.periodLabel(this.state.year, this.state.month);\n\n  componentDidMount() {"
+  );
+
   fs.writeFileSync(path.join(OUT_DIR, "index.html"), template);
 
   fs.copyFileSync(
