@@ -23,14 +23,3 @@ contextBridge.exposeInMainWorld("nativeMenu", {
     ipcRenderer.on("menu-action", (_event, action: string) => callback(action));
   },
 });
-
-// window.print() on Windows opens the native OS print dialog, which for
-// Electron apps shows "This app doesn't support print preview" and lists
-// physical/virtual printers rather than offering a direct "Save as PDF" —
-// confusing, and easy to point at the wrong destination. printToPDF()
-// renders straight to a PDF buffer (respecting the app's own print CSS,
-// including print-color-adjust:exact) and this writes it to a file the
-// user picks via a native Save dialog — no OS print dialog involved.
-contextBridge.exposeInMainWorld("electronPrint", {
-  exportPDF: (filename: string) => ipcRenderer.invoke("export-pdf", filename),
-});
