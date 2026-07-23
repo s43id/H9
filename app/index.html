@@ -1427,16 +1427,15 @@ class Component extends DCLogic {
     }
     if (res && res.ok) {
       this.flashStatus("Restored " + res.count + " entr" + (res.count === 1 ? "y" : "ies"));
-      // Older backups (from before links moved out of per-period entries)
-      // won't have a links field at all — leave the current links store
-      // untouched in that case. When the backup does have one, incoming
-      // links win per-id but anything only known locally is kept, so
-      // restoring on a fresh install or a different platform still ends
-      // up with the union of both.
+      // Restoring a backup replaces the current links wholesale with
+      // whatever the backup has, rather than merging — the backup is
+      // meant to be the source of truth being restored, not a partial
+      // update. Older backups (from before links moved out of per-period
+      // entries) won't have a links field at all, so the current links
+      // store is left untouched in that case.
       if (res.links && typeof res.links === "object") {
-        const links = { ...this.state.links, ...res.links };
-        this.setState({ links });
-        this.saveLinks(links);
+        this.setState({ links: res.links });
+        this.saveLinks(res.links);
       }
       this.loadPeriod(this.state.year, this.state.month);
     } else {
