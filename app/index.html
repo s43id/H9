@@ -1407,7 +1407,7 @@ class Component extends DCLogic {
     const name = this.state.backupNameValue;
     this.setState({ backupNameModalOpen: false });
     try {
-      const res = await window.journalDB.backup(name);
+      const res = await window.journalDB.backup(name, this.state.links);
       this.flashStatus(res && res.ok ? "Backup saved" : "Backup cancelled");
     } catch (err) {
       console.error("[backupDb] failed:", err);
@@ -1427,6 +1427,17 @@ class Component extends DCLogic {
     }
     if (res && res.ok) {
       this.flashStatus("Restored " + res.count + " entr" + (res.count === 1 ? "y" : "ies"));
+      // Older backups (from before links moved out of per-period entries)
+      // won't have a links field at all — leave the current links store
+      // untouched in that case. When the backup does have one, incoming
+      // links win per-id but anything only known locally is kept, so
+      // restoring on a fresh install or a different platform still ends
+      // up with the union of both.
+      if (res.links && typeof res.links === "object") {
+        const links = { ...this.state.links, ...res.links };
+        this.setState({ links });
+        this.saveLinks(links);
+      }
       this.loadPeriod(this.state.year, this.state.month);
     } else {
       this.flashStatus("Restore cancelled");

@@ -97,9 +97,9 @@ function registerDbHandlers(): void {
     db.save(args.key, args.label, args.year, args.month, args.data)
   );
   ipcMain.handle("db:remove", (_e, key: string) => db.remove(key));
-  ipcMain.handle("db:backup", (e, name: string) => {
+  ipcMain.handle("db:backup", (e, args: { name: string; links?: Record<string, string> }) => {
     const win = BrowserWindow.fromWebContents(e.sender) || BrowserWindow.getAllWindows()[0];
-    return db.backup(win, name);
+    return db.backup(win, args.name, args.links || {});
   });
   ipcMain.handle("db:restore", (e) => {
     const win = BrowserWindow.fromWebContents(e.sender) || BrowserWindow.getAllWindows()[0];
