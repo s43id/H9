@@ -1172,6 +1172,7 @@ class Component extends DCLogic {
     backupNameModalOpen: false, backupNameValue: "",
     saveNameModalOpen: false, saveNameValue: "",
     dailyDay: new Date().getDate() <= 31 ? new Date().getDate() : 1,
+    links: {},
   };
 
   // Set synchronously (not just inside loadPeriod, which componentDidMount
@@ -1184,6 +1185,7 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this.loadPeriod(this.state.year, this.state.month);
+    this.loadLinks();
     this.mq = window.matchMedia("(max-width: 720px)");
     const update = () => this.setState({ isMobile: this.mq.matches });
     this.mq.addEventListener("change", update);
@@ -1200,7 +1202,53 @@ class Component extends DCLogic {
     const data = (await window.journalDB.load(key)) || { entries:{}, qual:{}, daily:{} };
     this.currentKey = key;
     this.currentLabel = this.periodLabel(year, month);
+    // links intentionally left untouched here — they live outside any
+    // period's saved record (see loadLinks), so switching periods never
+    // changes or clears them.
     this.setState({ year, month, entries: data.entries||{}, qual: data.qual||{}, daily: data.daily||{} });
+  }
+
+  // Note links are entered once per indicator (e.g. a source URL for "Real
+  // GDP") and meant to stay put regardless of which month is open or
+  // whether the current period gets cleared — unlike e1-e4, they aren't
+  // period data. Stored in their own localStorage bucket, completely
+  // outside window.journalDB's per-period records, so New Entry (which
+  // only clears entries/qual/daily) and switching periods via Open never
+  // touch them.
+  async loadLinks() {
+    let links = {};
+    try {
+      links = JSON.parse(localStorage.getItem("macro-journal-links") || "{}") || {};
+    } catch (e) {}
+    this.setState({ links });
+    await this.migrateLegacyLinksOnce(links);
+  }
+
+  saveLinks(links) {
+    localStorage.setItem("macro-journal-links", JSON.stringify(links));
+  }
+
+  // One-time upgrade path for records saved before links moved out of
+  // per-period entries: pulls any notes already sitting inside saved
+  // periods into the new global link store, so upgrading users don't have
+  // to re-enter links they'd already typed in.
+  async migrateLegacyLinksOnce(currentLinks) {
+    if (localStorage.getItem("macro-journal-links-migrated")) return;
+    try {
+      const items = (await window.journalDB.list()) || [];
+      const merged = { ...currentLinks };
+      for (const item of items) {
+        const data = await window.journalDB.load(item.key);
+        const entries = (data && data.entries) || {};
+        Object.keys(entries).forEach((id) => {
+          const note = entries[id] && entries[id].notes;
+          if (note && !merged[id]) merged[id] = note;
+        });
+      }
+      this.setState({ links: merged });
+      this.saveLinks(merged);
+    } catch (e) {}
+    localStorage.setItem("macro-journal-links-migrated", "1");
   }
 
   persistCurrent() {
@@ -1229,7 +1277,7 @@ class Component extends DCLogic {
   }
 
   openNoteLink(id) {
-    const link = (this.state.entries[id] && this.state.entries[id].notes) || "";
+    const link = this.state.links[id] || "";
     if (!link) { this.editNoteLink(id); return; }
     window.open(link, "_blank");
   }
@@ -1240,15 +1288,16 @@ class Component extends DCLogic {
     // "Add link/Edit link doesn't work on Windows". Same in-app modal
     // pattern as the Open list below instead of a native dialog, so it
     // behaves identically on every platform.
-    const link = (this.state.entries[id] && this.state.entries[id].notes) || "";
+    const link = this.state.links[id] || "";
     this.setState({ linkModalOpen: true, linkModalId: id, linkModalValue: link });
   }
 
   onLinkModalChange(value) { this.setState({ linkModalValue: value }); }
 
   saveLinkModal() {
-    this.onEntryChange(this.state.linkModalId, "notes", this.state.linkModalValue.trim());
-    this.setState({ linkModalOpen: false });
+    const links = { ...this.state.links, [this.state.linkModalId]: this.state.linkModalValue.trim() };
+    this.setState({ links, linkModalOpen: false });
+    this.saveLinks(links);
   }
 
   cancelLinkModal() { this.setState({ linkModalOpen: false }); }
@@ -1668,10 +1717,11 @@ class Component extends DCLogic {
       const indicators = ch.indicators.map(([name, freq]) => {
         const id = ch.key + "__" + slug(name);
         const e = s.entries[id] || {};
+        const link = s.links[id] || "";
         return {
           id, name, freq,
-          e1: e.e1||"", e2: e.e2||"", e3: e.e3||"", e4: e.e4||"", notes: e.notes||"",
-          pinColor: e.notes ? "#c8963e" : "#b8b3a0",
+          e1: e.e1||"", e2: e.e2||"", e3: e.e3||"", e4: e.e4||"", notes: link,
+          pinColor: link ? "#c8963e" : "#b8b3a0",
           readOnly,
           onE1: (ev)=>this.onEntryChange(id,"e1",ev.target.value),
           onE2: (ev)=>this.onEntryChange(id,"e2",ev.target.value),
