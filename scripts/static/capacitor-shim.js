@@ -71,6 +71,20 @@
     return originalClick.call(this);
   };
 
+  // Android's WebView doesn't implement WebChromeClient.onCreateWindow(),
+  // so window.open(url, "_blank") (used by openNoteLink in the inline
+  // script below) silently does nothing there — no new window, no error,
+  // no navigation. A same-window navigation via location.href works
+  // instead: Capacitor's default WebViewClient only allows navigation to
+  // the app's own bundled host, so any http(s) URL outside it is handed
+  // off to the OS as an ACTION_VIEW intent, which opens the system
+  // browser — the same behavior Electron gets via shell.openExternal()
+  // and desktop/mobile web browsers get from window.open() itself.
+  window.open = function (url) {
+    window.location.href = url;
+    return null;
+  };
+
   // Android WebView's window.print() is a silent no-op. android/app/src/
   // main/java/.../PrintPlugin.java exposes the WebView's own
   // createPrintDocumentAdapter() (this is how printing already works in

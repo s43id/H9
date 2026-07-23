@@ -568,6 +568,20 @@ function main() {
     "  async restoreDb() {\n    this.setState({ menuOpen: false });\n    let res;\n    try {\n      res = await window.journalDB.restore();\n    } catch (err) {\n      console.error(\"[restoreDb] failed:\", err);\n      this.flashStatus(\"Restore failed — \" + (err && err.message ? err.message : \"see console\"));\n      return;\n    }\n    if (res && res.ok) {\n      this.flashStatus(\"Restored \" + res.count + \" entr\" + (res.count === 1 ? \"y\" : \"ies\"));\n      // Restoring a backup replaces the current links wholesale with\n      // whatever the backup has, rather than merging — the backup is\n      // meant to be the source of truth being restored, not a partial\n      // update. Older backups (from before links moved out of per-period\n      // entries) won't have a links field at all, so the current links\n      // store is left untouched in that case.\n      if (res.links && typeof res.links === \"object\") {\n        this.setState({ links: res.links });\n        this.saveLinks(res.links);\n      }\n      this.loadPeriod(this.state.year, this.state.month);\n    } else {\n      this.flashStatus(\"Restore cancelled\");\n    }\n  }"
   );
 
+// window.open(link) with no scheme (e.g. a bare "example.com" typed
+  // into the link field) resolves as relative to the app's own origin
+  // instead of opening a browser at all — normalize to https:// first,
+  // same as a browser address bar would.
+  template = template.replace(
+    "function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,\"_\").replace(/^_+|_+$/g,\"\"); }",
+    "function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,\"_\").replace(/^_+|_+$/g,\"\"); }\n\n// A link typed as \"example.com/x\" (no scheme) is a relative URL to\n// window.open — it resolves against the app's own origin (file:// in\n// Electron, the Capacitor local server on Android) instead of opening a\n// browser at all. Assume https:// when no scheme is present, same as\n// typing a bare domain into a browser's address bar.\nfunction normalizeLink(url) {\n  const trimmed = (url || \"\").trim();\n  if (!trimmed) return \"\";\n  return /^[a-zA-Z][a-zA-Z0-9+.-]*:\\/\\//.test(trimmed) ? trimmed : \"https://\" + trimmed;\n}"
+  );
+
+  template = template.replace(
+    "  openNoteLink(id) {\n    const link = this.state.links[id] || \"\";\n    if (!link) { this.editNoteLink(id); return; }\n    window.open(link, \"_blank\");\n  }",
+    "  openNoteLink(id) {\n    const link = this.state.links[id] || \"\";\n    if (!link) { this.editNoteLink(id); return; }\n    window.open(normalizeLink(link), \"_blank\");\n  }"
+  );
+
   fs.writeFileSync(path.join(OUT_DIR, "index.html"), template);
 
   fs.copyFileSync(

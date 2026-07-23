@@ -1159,6 +1159,17 @@ const APP_PASSWORD = "12345";
 
 function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,""); }
 
+// A link typed as "example.com/x" (no scheme) is a relative URL to
+// window.open — it resolves against the app's own origin (file:// in
+// Electron, the Capacitor local server on Android) instead of opening a
+// browser at all. Assume https:// when no scheme is present, same as
+// typing a bare domain into a browser's address bar.
+function normalizeLink(url) {
+  const trimmed = (url || "").trim();
+  if (!trimmed) return "";
+  return /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(trimmed) ? trimmed : "https://" + trimmed;
+}
+
 class Component extends DCLogic {
   state = {
     lockInput: "", lockError: "",
@@ -1279,7 +1290,7 @@ class Component extends DCLogic {
   openNoteLink(id) {
     const link = this.state.links[id] || "";
     if (!link) { this.editNoteLink(id); return; }
-    window.open(link, "_blank");
+    window.open(normalizeLink(link), "_blank");
   }
 
   editNoteLink(id) {
