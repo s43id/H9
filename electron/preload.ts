@@ -11,7 +11,7 @@ contextBridge.exposeInMainWorld("journalDB", {
   save: (key: string, label: string, year: number, month: number, data: unknown) =>
     ipcRenderer.invoke("db:save", { key, label, year, month, data }),
   remove: (key: string) => ipcRenderer.invoke("db:remove", key),
-  backup: (name: string) => ipcRenderer.invoke("db:backup", name),
+  backup: (name: string, links: Record<string, string>) => ipcRenderer.invoke("db:backup", { name, links }),
   restore: () => ipcRenderer.invoke("db:restore"),
 });
 

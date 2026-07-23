@@ -147,14 +147,14 @@
       }
     }
 
-    async function backup(name) {
+    async function backup(name, links) {
       var items = await list();
       var records = [];
       for (var i = 0; i < items.length; i++) {
         var record = await readRecord(items[i].key);
         if (record) records.push(record);
       }
-      var content = JSON.stringify({ version: 1, records: records }, null, 2);
+      var content = JSON.stringify({ version: 1, records: records, links: links || {} }, null, 2);
       var filename = backupFilename(name);
       // encoding: "utf8" matters here — without it Filesystem.writeFile
       // treats `data` as base64, and this is a plain JSON string. Likely
@@ -169,6 +169,7 @@
       return promptForFile(async function (text) {
         var parsed = JSON.parse(text);
         if (!parsed || !Array.isArray(parsed.records)) return { ok: false };
+        var links = parsed.links && typeof parsed.links === "object" ? parsed.links : undefined;
         // Regenerate `key` from year/month rather than trusting the
         // backup file's stored key, and skip individual bad/unwritable
         // records instead of aborting the whole restore — see the
@@ -192,7 +193,7 @@
             // this one record failed to write — keep going with the rest
           }
         }
-        return { ok: true, count: count };
+        return { ok: true, count: count, links: links };
       });
     }
 
@@ -244,10 +245,10 @@
     writeIndex(readIndex().filter(function (k) { return k !== key; }));
   }
 
-  async function backupLS(name) {
+  async function backupLS(name, links) {
     var items = await listLS();
     var records = items.map(function (it) { return readRecordLS(it.key); }).filter(Boolean);
-    var content = JSON.stringify({ version: 1, records: records }, null, 2);
+    var content = JSON.stringify({ version: 1, records: records, links: links || {} }, null, 2);
     var blob = new Blob([content], { type: "application/json" });
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
@@ -262,6 +263,7 @@
     return promptForFile(function (text) {
       var parsed = JSON.parse(text);
       if (!parsed || !Array.isArray(parsed.records)) return { ok: false };
+      var links = parsed.links && typeof parsed.links === "object" ? parsed.links : undefined;
       var count = 0;
       for (var i = 0; i < parsed.records.length; i++) {
         var record = parsed.records[i];
@@ -281,7 +283,7 @@
           // this one record failed to write — keep going with the rest
         }
       }
-      return { ok: true, count: count };
+      return { ok: true, count: count, links: links };
     });
   }
 

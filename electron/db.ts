@@ -75,7 +75,11 @@ function backupFilename(name: string): string {
   return base.toLowerCase().endsWith(".json") ? base : `${base}.json`;
 }
 
-export async function backup(win: BrowserWindow, name: string): Promise<{ ok: boolean; count?: number }> {
+export async function backup(
+  win: BrowserWindow,
+  name: string,
+  links: Record<string, string> = {}
+): Promise<{ ok: boolean; count?: number }> {
   const items = await list();
   const records: Record_[] = [];
   for (const item of items) {
@@ -87,7 +91,7 @@ export async function backup(win: BrowserWindow, name: string): Promise<{ ok: bo
     filters: [{ name: "Journal backup", extensions: ["json"] }],
   });
   if (result.canceled || !result.filePath) return { ok: false };
-  await fs.writeFile(result.filePath, JSON.stringify({ version: 1, records }, null, 2), "utf8");
+  await fs.writeFile(result.filePath, JSON.stringify({ version: 1, records, links }, null, 2), "utf8");
   return { ok: true, count: records.length };
 }
 
@@ -102,14 +106,14 @@ function isPlausibleRecord(r: unknown): r is Record_ {
   );
 }
 
-export async function restore(win: BrowserWindow): Promise<{ ok: boolean; count?: number }> {
+export async function restore(win: BrowserWindow): Promise<{ ok: boolean; count?: number; links?: Record<string, string> }> {
   const result = await dialog.showOpenDialog(win, {
     properties: ["openFile"],
     filters: [{ name: "Journal backup", extensions: ["json"] }],
   });
   if (result.canceled || result.filePaths.length === 0) return { ok: false };
 
-  let parsed: { records?: unknown };
+  let parsed: { records?: unknown; links?: unknown };
   try {
     const raw = await fs.readFile(result.filePaths[0], "utf8");
     parsed = JSON.parse(raw);
@@ -117,6 +121,8 @@ export async function restore(win: BrowserWindow): Promise<{ ok: boolean; count?
     return { ok: false };
   }
   if (!Array.isArray(parsed.records)) return { ok: false };
+  const links =
+    parsed.links && typeof parsed.links === "object" ? (parsed.links as Record<string, string>) : undefined;
 
   // Regenerate `key` from year/month rather than trusting whatever the
   // backup file says — guarantees every restored record is internally
@@ -144,5 +150,5 @@ export async function restore(win: BrowserWindow): Promise<{ ok: boolean; count?
       // this one record failed to write — keep going with the rest
     }
   }
-  return { ok: true, count };
+  return { ok: true, count, links };
 }
